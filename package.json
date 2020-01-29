@@ -2,13 +2,14 @@
   "name": "labbaik_backend",
   "version": "1.0.0",
   "description": "Plateforme labbaik backend",
-  "main": "server.js",
+  "main": "./src/server.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "npm run test",
-    "start": "node server.js"
+    "start": "node ./src/server.js",
+    "dev": "NODE_ENV=development nodemon ./src/server.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -16,6 +17,7 @@
   },
   "author": "NABE Bammoy Minkitam",
   "license": "MIT",
+  "type": "module",
   "homepage": "https://bitbucket.org/masskoder/labbaik-backend#readme",
   "dependencies": {
     "async": "^3.1.1",
@@ -45,5 +47,9 @@
     "canvas": "^2.6.1",
     "jest": "^25.1.0",
     "utf-8-validate": "^5.0.2"
+  },
+  "engines": {
+    "node": ">= 13.7.0",
+    "npm": ">= 6.13.6"
   }
 }

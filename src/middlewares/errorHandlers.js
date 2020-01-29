@@ -1,11 +1,12 @@
 import log from 'debug'
+import moment from 'moment'
 import('colors')
 
-const debug = log(process.env.APP_NAME)
+const debug = log('labbaik')
 
 export function logErrorMiddleware(error, req, res, next) {
 
-    debug(`Error : ${JSON.stringify(error)}`.red)
+    debug(`${moment().format('DD/MM/YYYY HH:mm:ss')} : ${JSON.stringify(error)}`.red)
     next(error)
 
 }
