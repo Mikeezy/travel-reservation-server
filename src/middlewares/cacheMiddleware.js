@@ -2,7 +2,7 @@ import NodeCache from 'node-cache'
 import {successMessage} from '../utils/response.js'
 
 const cache = new NodeCache({
-    stdTTL: +process.env.CACHE_TTL || 5 * 60
+    stdTTL: 15 * 60
 })
 
 function getKeyFromRequest(req) {
