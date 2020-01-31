@@ -1,62 +1,44 @@
-import { generate } from 'rand-token';
-import uuidV1 from 'uuid/v1';
-import Promise from 'bluebird';
+import randToken from 'rand-token';
+import uuid from 'uuid';
 
+const uuidV1 = uuid.v1
 
-export function generateReference (schema, fields, taille) {
+export async function generateReference (schema, fields, taille) {
 
-    return new Promise((resolve, reject) => {
+    const code = randToken.generate(taille);
 
-        let code = generate(taille);
+    const result = await schema.findOne({
+        [fields]: code
+    }).exec()
 
-        schema.findOne({
-            [fields]: code
-        }).exec().then((result) => {
+    if(result === null || typeof result._id === 'undefined'){
 
-            if (result === null || typeof result._id === 'undefined') {
+        return code
 
-                resolve(code);
+    }else{
 
-            } else {
-                generateReference(schema, fields, taille);
-            }
+        return generateReference(schema, fields, taille)
 
-        }).catch((error) => {
-
-            reject(error);
-        });
-
-    });
-
+    }
 
 }
 
-export function generateUuid  (schema, fields)  {
+export async function generateUuid  (schema, fields)  {
+    
+    const code = uuidV1();
 
-    return new Promise((resolve, reject) => {
+    const result = await schema.findOne({
+        [fields]: code
+    }).exec()
 
-        let code = uuidV1();
+    if(result === null || typeof result._id === 'undefined'){
 
-        schema.findOne({
-            [fields]: code
-        }).exec().then((result) => {
+        return code
 
+    }else{
 
-            if (result === null || typeof result._id === 'undefined') {
+        return generateUuid(schema, fields)
 
-                resolve(code);
-
-            } else {
-
-                generateUuid(schema, fields);
-
-            }
-
-        }).catch((error) => {
-
-            reject(error);
-        });
-
-    });
+    }
 
 }

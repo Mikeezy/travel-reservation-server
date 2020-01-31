@@ -1,20 +1,25 @@
 import nodemailer  from 'nodemailer' 
 import handlebars  from 'handlebars' 
-import { google }  from 'googleapis' 
+import googleapis  from 'googleapis' 
 import fs  from 'fs' 
-import async  from 'async' ;
-import Promise  from 'bluebird' 
+import async  from 'async'
+import Promise  from 'bluebird'
+import path from "path"
+import {get} from "../config/config.js"
 
-const OAuth2 = google.auth.OAuth2;
+const OAuth2 = googleapis.google.auth.OAuth2;
+const Config = get(process.env.NODE_ENV)
 
 const oauth2Client = new OAuth2(
-    process.env.EMAIL_CLIENT_ID, // ClientID
-    process.env.EMAIL_CLIENT_SECRET, // Client Secret
+    Config.email.EMAIL_CLIENT_ID, // ClientID
+    Config.email.EMAIL_CLIENT_SECRET, // Client Secret
     "https://developers.google.com/oauthplayground" // Redirect URL
 );
 
+const __dirname = path.resolve()
+
 oauth2Client.setCredentials({
-    refresh_token: process.env.EMAIL_REFRESH_TOKEN
+    refresh_token:Config.email.EMAIL_REFRESH_TOKEN
 });
 
 
@@ -25,15 +30,15 @@ const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
         type: "OAuth2",
-        user: process.env.EMAIL_USERNAME, 
-        clientId: process.env.EMAIL_CLIENT_ID,
-        clientSecret: process.env.EMAIL_CLIENT_SECRET,
-        refreshToken: process.env.EMAIL_REFRESH_TOKEN,
+        user:Config.email.EMAIL_USERNAME, 
+        clientId:Config.email.EMAIL_CLIENT_ID,
+        clientSecret:Config.email.EMAIL_CLIENT_SECRET,
+        refreshToken:Config.email.EMAIL_REFRESH_TOKEN,
         accessToken: accessToken
     }
 });
 
-const sender = `"${process.env.EMAIL_HEADER}" <${process.env.EMAIL_USERNAME}>`;
+const sender = `"${Config.email.EMAIL_HEADER}" <${Config.email.EMAIL_USERNAME}>`;
 
 const confirmationfilePath = __dirname + '/views/confirmationEmail.html';
 const afterRegisterfilePath = __dirname + '/views/afterRegister.html';
@@ -42,7 +47,7 @@ const resetPasswordfilePath = __dirname + '/views/resetPassword.html';
 
 
 //data : to,info
-exports.sendConfirmationMail = (data) => {
+const sendConfirmationMail = (data) => {
 
 
     return new Promise((resolve, reject) => {
@@ -105,7 +110,7 @@ exports.sendConfirmationMail = (data) => {
 };
 
 //data : to,info
-exports.sendAfterRegisterMail = (data) => {
+const sendAfterRegisterMail = (data) => {
 
 
     return new Promise((resolve, reject) => {
@@ -167,7 +172,7 @@ exports.sendAfterRegisterMail = (data) => {
 
 
 //data : to,info
-exports.sendResetPasswordMail = (data) => {
+const sendResetPasswordMail = (data) => {
 
 
     return new Promise((resolve, reject) => {
@@ -226,3 +231,9 @@ exports.sendResetPasswordMail = (data) => {
 
     });
 };
+
+export default {
+    sendConfirmationMail,
+    sendAfterRegisterMail,
+    sendResetPasswordMail
+}
