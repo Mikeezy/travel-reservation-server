@@ -5,17 +5,20 @@ import helmet from 'helmet'
 import cors from 'cors'
 import morgan from 'morgan'
 import customEnv from 'custom-env'
-import {handleErrorMiddleware,logErrorMiddleware} from './middlewares/errorHandlers.js'
+import logErrorMiddleware from './middlewares/loggerMiddleware.js'
+import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware.js'
 import notFindMiddleware from './middlewares/notFindMiddleware.js'
-import v1Router from './routers/v1/router.js'
+import v1Router from './routers/v1/api_router.js'
+import authRouter from './routers/v1/auth_router.js'
 
-customEnv.env(true)
+customEnv.env('development')
 
-const app = express();
-const port = process.env.PORT || 4152;
-const __dirname = path.resolve();
+const app = express()
+const port = process.env.PORT || 4152
+const __dirname = path.resolve()
 
 // Configuration
+
 
 app.use(cors())
 
@@ -31,9 +34,9 @@ if (process.env.NODE_ENV === "development") {
 
 }
 
-app.use(express.static(join(__dirname, '/src/uploads')));
+app.use(express.static(join(__dirname, '/uploads')));
 
-app.use(express.static(join(__dirname, '/src/public')));
+app.use(express.static(join(__dirname, '/public')));
 
 
 app.use(bodyParser.json({
@@ -49,11 +52,10 @@ app.use(bodyParser.urlencoded({
 
 //Path
 
-app.use('/v1',v1Router)
-
+app.use('/v1',authRouter,v1Router)
 app.use(notFindMiddleware)
 app.use(logErrorMiddleware)
-app.use(handleErrorMiddleware)
+app.use(errorHandlerMiddleware)
 
 
 

@@ -1,11 +1,11 @@
-import mongoose from '../../config/database'
+import mongoose from '../../config/database.js'
 
 const Schema = mongoose.Schema;
 
 let travelSchema = new Schema({
     name : { type: String, trim: true },
-    from : {type: Schema.Types.ObjectId, ref: 'town'},
-    to : {type: Schema.Types.ObjectId, ref: 'town'},
+    from : {type: Schema.Types.ObjectId},
+    to : {type: Schema.Types.ObjectId},
     price : {type :Number, default:0},
     date_departing : Date,
     date_arriving : Date,

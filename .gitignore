@@ -1,2 +1,4 @@
 node_modules/
 test/
+src/logs/error.log
+src/logs/combined.log
