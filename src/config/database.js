@@ -1,9 +1,7 @@
 import mongoose from 'mongoose'
-import {get} from "./config.js"
+import config from 'config'
 
-const Config = get(process.env.NODE_ENV)
-
-mongoose.connect(`${Config.DATABASE_URL}`,{ useNewUrlParser: true,useUnifiedTopology: true });
+mongoose.connect(`${config.get('DATABASE_URL')}`,{ useNewUrlParser: true,useUnifiedTopology: true });
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 

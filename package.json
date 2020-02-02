@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "start": "node ./src/server.js",
+    "start": "NODE_ENV=production pm2 start ./src/server.js -i 3 --name labbaik_backend",
     "dev": "NODE_ENV=development nodemon ./src/server.js",
     "test": "jest"
   },
@@ -25,10 +25,12 @@
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",
+    "config": "^3.2.5",
     "cors": "^2.8.5",
     "custom-env": "^1.0.2",
     "debug": "^4.1.1",
     "express": "^4.17.1",
+    "express-rate-limit": "^5.0.0",
     "express-validator": "^6.3.1",
     "googleapis": "^47.0.0",
     "handlebars": "^4.7.2",
@@ -42,6 +44,8 @@
     "node-cache": "^5.1.0",
     "nodemailer": "^6.4.2",
     "rand-token": "^0.4.0",
+    "rate-limit-redis": "^1.7.0",
+    "redis": "^2.8.0",
     "uuid": "^3.4.0",
     "winston": "^3.2.1"
   },
