@@ -12,7 +12,7 @@ router.use((req, res, next) => {
     next()
 })
 
-router.use('/auth', authLimiter,authRouter)
+router.use('/auth', authRouter)
 
 
 
