@@ -1,38 +1,38 @@
 import {
-    PropertyInvalidWithMessageError,
-    MyError
+    PropertyInvalidWithMessageError
 } from '../utils/customError.js'
 
-export default function handleErrorMiddleware(error, req, res, next) {
+export default async function handleErrorMiddleware(error, req, res, next) {
 
     if (res.headersSent) {
 
         return next(error)
-        
+
     }
 
-    let dataToReturn = {
-        success: false
-    }
+    const isOperationalError = await handleError(error);
 
-    if (error instanceof MyError) {
+    if (!isOperationalError) {
 
-        dataToReturn.message = error.message
-        dataToReturn.code = error.code ? error.code : 'ERROR'
+        return next(error)
 
     } else {
 
-        dataToReturn.message = `Operation failure, it seems like something went wrong, please retry !`
-        dataToReturn.code = 'ERROR'
+        const dataToReturn = {
+            success: false,
+            message : error.message,
+            code : error.code ? error.code : 'ERROR'
+        }
+
+        if (error instanceof PropertyInvalidWithMessageError) {
+
+            dataToReturn.property = error.property
+
+        }
+
+        return res.status(200).json(dataToReturn)
 
     }
 
-    if (error instanceof PropertyInvalidWithMessageError) {
-
-        dataToReturn.property = error.property
-
-    }
-
-    return res.status(200).json(dataToReturn);
 
 }

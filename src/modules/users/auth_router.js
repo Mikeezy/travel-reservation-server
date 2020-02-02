@@ -13,6 +13,9 @@ import {
     resetPasswordPartTwo,
     resetPasswordPartThree
 } from './controller.js'
+import {
+    authLimiterMiddleware
+} from '../../middlewares/rateLimitMiddleware.js'
 
 const router = express.Router()
 
@@ -36,6 +39,10 @@ router.post('/signin',
 
 
 router.post('/signupAdminPartTwo/:token',
+    authLimiterMiddleware({
+        max: 2,
+        message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
+    }),
     validator.checkSchema(validationSchema.signupAdminPartTwoSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
@@ -57,6 +64,10 @@ router.post('/signupAdminPartTwo/:token',
 )
 
 router.post('/resetPasswordPartOne',
+    authLimiterMiddleware({
+        max: 2,
+        message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
+    }),
     validator.checkSchema(validationSchema.resetPasswordPartOneSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
@@ -73,6 +84,10 @@ router.post('/resetPasswordPartOne',
 )
 
 router.get('/resetPasswordPartTwo/:token',
+    authLimiterMiddleware({
+        max: 2,
+        message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
+    }),
     validator.checkSchema(validationSchema.resetPasswordPartTwoSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
@@ -89,6 +104,10 @@ router.get('/resetPasswordPartTwo/:token',
 )
 
 router.post('/resetPasswordPartThree',
+    authLimiterMiddleware({
+        max: 2,
+        message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
+    }),
     validator.checkSchema(validationSchema.resetPasswordPartThreeSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {

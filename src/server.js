@@ -1,17 +1,18 @@
 import express from 'express'
-import path ,{ join } from "path"
+import path, {
+    join
+} from "path"
 import bodyParser from 'body-parser'
 import helmet from 'helmet'
 import cors from 'cors'
 import morgan from 'morgan'
-import customEnv from 'custom-env'
-import logErrorMiddleware from './middlewares/loggerMiddleware.js'
 import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware.js'
 import notFindMiddleware from './middlewares/notFindMiddleware.js'
 import v1Router from './routers/v1/api_router.js'
 import authRouter from './routers/v1/auth_router.js'
-
-customEnv.env('development')
+import {
+    handleError
+} from './utils/customError.js'
 
 const app = express()
 const port = process.env.PORT || 4152
@@ -19,12 +20,12 @@ const __dirname = path.resolve()
 
 // Configuration
 
-
 app.use(cors())
 
 if (process.env.NODE_ENV === "production") {
 
     app.use(helmet())
+    app.set('trust proxy',1)
 
 }
 
@@ -40,24 +41,36 @@ app.use(express.static(join(__dirname, '/public')));
 
 
 app.use(bodyParser.json({
-    limit: '500mb'
+    limit: '50mb'
 }))
 
 
 app.use(bodyParser.urlencoded({
-    limit: '500mb',
+    limit: '50mb',
     extended: true,
     parameterLimit: 500000
 }));
 
 //Path
 
-app.use('/v1',authRouter,v1Router)
+app.use('/v1', authRouter, v1Router)
 app.use(notFindMiddleware)
-app.use(logErrorMiddleware)
 app.use(errorHandlerMiddleware)
 
+// Handler
 
+process.on('unhandledRejection', (reason, p) => {
+    
+    throw reason
+
+})
+
+process.on('uncaughtException', async (error) => {
+
+    const isOperationalError = await handleError(error)
+    if (!isOperationalError) process.exit(1)
+
+})
 
 // Lauch
 app.listen(port);

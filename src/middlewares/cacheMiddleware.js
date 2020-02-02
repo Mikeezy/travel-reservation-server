@@ -1,9 +1,7 @@
-import NodeCache from 'node-cache'
+import client from '../utils/redis.js'
 import {successMessage} from '../utils/response.js'
 
-const cache = new NodeCache({
-    stdTTL: 15 * 60
-})
+const ttl = 15 * 60
 
 function getKeyFromRequest(req) {
 
@@ -12,11 +10,11 @@ function getKeyFromRequest(req) {
     return key
 }
 
-function get(req, res, next) {
+async function get(req, res, next) {
 
     const key = getKeyFromRequest(req)
 
-    const data = cache.get(key)
+    const data = await client.getAsync(key)
 
     if(data) {
 
@@ -29,24 +27,22 @@ function get(req, res, next) {
 
 }
 
-function set(req, res, next) {
+async function set(req, res, next) {
 
     const key = getKeyFromRequest(req)
 
-    cache.set(key,res.locals.data)
+    await client.setAsync(key,res.locals.data,'EX',ttl)
 
     return next()
 
 }
 
-function clear (req,res,next) {
+async function clear (req,res,next) {
 
-    let keysCached = cache.keys()
     const keysToDelete = req.baseUrl
+    const dataToDelete = await client.keysAsync(`${keysToDelete}*`)
 
-    let dataToDelete = keysCached.filter(k => k.includes(keysToDelete))
-
-    cache.del(dataToDelete)
+    client.del(dataToDelete)
 
     return next()
 

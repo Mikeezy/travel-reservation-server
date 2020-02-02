@@ -1,0 +1,24 @@
+{
+	"email": {
+		"EMAIL_FROM": "",
+		"EMAIL_HEADER": "",
+		"EMAIL_USERNAME": "",
+		"EMAIL_PASSWORD": "",
+		"EMAIL_CLIENT_ID": "",
+		"EMAIL_CLIENT_SECRET": "",
+		"EMAIL_REFRESH_TOKEN": "",
+		"EMAIL_ADMIN" : "['mikimus113@gmail.com']"
+	},
+
+	"DATABASE_URL": "",
+	
+	"HOSTNAME_BACKEND": "",
+	"HOSTNAME_FRONTEND": "",
+
+	"TOKEN_PRIVATE_KEY": "z9wsd72b-17a6-4K5e-8q784-7098deb98lcf",
+	"TOKEN_EXPIRE_USER": "24h",
+	"TOKEN_EXPIRE_IN_SHORT": "1h",
+
+	"LINK_CONFIRMATION_FRONTEND": "/auth/confirmation",
+	"LINK_RESET_PASSWORD_FRONTEND": "/auth/resetPassword"
+}
