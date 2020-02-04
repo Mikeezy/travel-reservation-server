@@ -4,8 +4,10 @@ const Schema = mongoose.Schema;
 
 let countrySchema = new Schema({
     name : {type :String, trim : true},
+    status : {type :Boolean, default:true},
     towns : [{
         name : {type :String, trim : true},
+        status : {type :Boolean, default:true},
         description : {type :String, trim : true}
     }]
 },{
