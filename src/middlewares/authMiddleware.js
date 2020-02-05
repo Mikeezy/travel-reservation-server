@@ -1,7 +1,8 @@
 import jwt from 'jsonwebtoken'
 import {customError} from '../utils/customError.js'
+import config from 'config'
 
-const privateKey = process.env.TOKEN_PRIVATE_KEY
+const privateKey = config.get('TOKEN_PRIVATE_KEY')
 
 export default function (req, res, next) {
 
@@ -10,7 +11,7 @@ export default function (req, res, next) {
 
     if (!token) {
 
-        let error = new customError(`Token not provided, please authenticate yourself !`,'TOKEN_NOT_PROVIDED')
+        let error = new customError(`Token non fourni, veuillez vous authentifier svp !`,'TOKEN_NOT_PROVIDED')
         next(error)
 
     } else {
@@ -23,12 +24,12 @@ export default function (req, res, next) {
 
                 if (error.name === 'TokenExpiredError') {
 
-                    let error = new customError('Token expired, please retry or authenticate yourself !','TOKEN_EXPIRED')
+                    let error = new customError('Token expiré, veuillez réessayer ou veuillez vous authentifier svp !','TOKEN_EXPIRED')
                     next(error)
 
                 } else if (error.name === 'JsonWebTokenError') {
 
-                    let error = new customError('Invalid Token, please retry or authenticate yourself !','TOKEN_INVALID')
+                    let error = new customError('Token invalide, veuillez réessayer ou veuillez vous authentifier svp !','TOKEN_INVALID')
                     next(error)
 
                 } else {
@@ -39,7 +40,7 @@ export default function (req, res, next) {
 
             }
 
-            req.user = decoded;
+            res.locals.user = decoded;
 
             next();
 

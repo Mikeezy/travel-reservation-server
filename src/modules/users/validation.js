@@ -5,12 +5,12 @@ const authSchema = {
         in: 'body',
         isEmail: true,
         normalizeEmail: true,
-        errorMessage: 'Invalid email'
+        errorMessage: 'Email invalide'
     },
     password: {
         in: 'body',
         isLength: {
-            errorMessage: 'Password must contain at least 7 characters !',
+            errorMessage: 'Le mot de passe doit contenir au moins 7 caractères svp !',
             options: {
                 min: 7
             }
@@ -23,7 +23,7 @@ const signupAdminPartOneSchema = {
         in: 'body',
         isEmail: true,
         normalizeEmail: true,
-        errorMessage: 'Invalid email',
+        errorMessage: 'Email invalide',
         bail: true,
         custom: {
             options: async (value) => {
@@ -33,7 +33,7 @@ const signupAdminPartOneSchema = {
                 }).select('_id').exec()
 
                 if (userEmail) {
-                    throw new Error('E-mail already in use, please retry !');
+                    throw new Error('Cet email est déjà utilisé, veuillez réessayer svp !');
                 }
 
                 return true
@@ -44,7 +44,7 @@ const signupAdminPartOneSchema = {
     role: {
         in: 'body',
         isIn: ['super admin', 'admin', 'manager', 'user', 'driver'],
-        errorMessage: 'Invalid role'
+        errorMessage: 'Role invalide'
     }
 }
 
@@ -52,14 +52,14 @@ const signupAdminPartTwoSchema = {
     token: {
         in: 'params',
         isJWT: true,
-        errorMessage: 'Invalid token'
+        errorMessage: 'Token invalide'
     },
     firstname: {
         in: 'body',
         trim: true,
         escape: true,
         isLength: {
-            errorMessage: 'Firstname must contain at least 2 characters !',
+            errorMessage: 'Le prénom doit contenir au moins 2 caractères svp !',
             options: {
                 min: 2
             }
@@ -70,7 +70,7 @@ const signupAdminPartTwoSchema = {
         trim: true,
         escape: true,
         isLength: {
-            errorMessage: 'Lastname must contain at least 2 characters !',
+            errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {
                 min: 2
             }
@@ -79,7 +79,7 @@ const signupAdminPartTwoSchema = {
     password: {
         in: 'body',
         isLength: {
-            errorMessage: 'Password must contain at least 7 characters !',
+            errorMessage: 'Le mot de passe doit contenir au moins 7 caractères svp !',
             options: {
                 min: 7
             }
@@ -91,7 +91,7 @@ const signupAdminPartTwoSchema = {
             options: (value, {req}) => {
 
                 if (value !== req.body.password) {
-                    throw new Error('Password confirmation does not match password');
+                    throw new Error('Le mot de passe confirmé est différent du mot de passe, veuillez réessayer svp !');
                 }
 
                 return true
@@ -108,7 +108,7 @@ const signupAdminPartTwoSchema = {
         },
         matches : {
             options : ['/^(2|7|9){1}[0-9]{7}$/i'],
-            errorMessage : 'Invalid phone number'
+            errorMessage : 'Numéro de téléphone invalide'
         }
     }
 }
@@ -118,7 +118,7 @@ const resetPasswordPartOneSchema = {
         in: 'body',
         isEmail: true,
         normalizeEmail: true,
-        errorMessage: 'Invalid email',
+        errorMessage: 'Email invalide',
         bail: true,
         custom: {
             options: async (value) => {
@@ -128,7 +128,7 @@ const resetPasswordPartOneSchema = {
                 }).select('_id').exec()
 
                 if (!userEmail) {
-                    throw new Error('E-mail does not exist, please retry !');
+                    throw new Error(`Cet email n'existe pas, veuillez réessayer svp !`);
                 }
 
                 return true
@@ -142,7 +142,7 @@ const resetPasswordPartTwoSchema = {
     token: {
         in: 'params',
         isJWT: true,
-        errorMessage: 'Invalid token'
+        errorMessage: 'Token invalide'
     }
 }
 
@@ -150,12 +150,12 @@ const resetPasswordPartThreeSchema = {
     token: {
         in: 'body',
         isJWT: true,
-        errorMessage: 'Invalid token'
+        errorMessage: 'Token invalide'
     },
     password: {
         in: 'body',
         isLength: {
-            errorMessage: 'Password must contain at least 7 characters !',
+            errorMessage: 'Le mot de passe doit contenir au moins 7 caractères svp !',
             options: {
                 min: 7
             }
@@ -167,7 +167,7 @@ const resetPasswordPartThreeSchema = {
             options: (value, {req}) => {
 
                 if (value !== req.body.password) {
-                    throw new Error('Password confirmation does not match password !');
+                    throw new Error('Le mot de passe confirmé est différent du mot de passe, veuillez réessayer svp ! !');
                 }
 
                 return true
@@ -181,7 +181,7 @@ const checkTokenSchema = {
     token: {
         in: 'params',
         isJWT: true,
-        errorMessage: 'Invalid token'
+        errorMessage: 'Token invalide'
     }
 }
 
@@ -189,7 +189,7 @@ const blockSchema = {
     id: {
         in: 'params',
         isMongoId: true,
-        errorMessage: 'Invalid id'
+        errorMessage: 'Id invalide'
     }
 }
 
@@ -197,7 +197,7 @@ const updatePasswordSchema = {
     password: {
         in: 'body',
         isLength: {
-            errorMessage: 'Password must contain at least 7 characters !',
+            errorMessage: 'Le mot de passe doit contenir au moins 7 caractères svp !',
             options: {
                 min: 7
             }
@@ -209,7 +209,7 @@ const updatePasswordSchema = {
             options: (value, {req}) => {
 
                 if (value !== req.body.password) {
-                    throw new Error('Password confirmation does not match password !');
+                    throw new Error('Le mot de passe confirmé est différent du mot de passe, veuillez réessayer svp ! !');
                 }
 
                 return true
@@ -220,7 +220,7 @@ const updatePasswordSchema = {
     old_password : {
         in: 'body',
         isLength: {
-            errorMessage: 'Old password must contain at least 7 characters !',
+            errorMessage: `L'ancien mot de passe doit contenir au moins 7 caractères svp !`,
             options: {
                 min: 7
             }
@@ -234,7 +234,7 @@ const updateProfileSchema = {
         trim: true,
         escape: true,
         isLength: {
-            errorMessage: 'Firstname must contain at least 2 characters !',
+            errorMessage: 'Le prénom doit contenir au moins 2 caractères svp !',
             options: {
                 min: 2
             }
@@ -245,7 +245,7 @@ const updateProfileSchema = {
         trim: true,
         escape: true,
         isLength: {
-            errorMessage: 'Lastname must contain at least 2 characters !',
+            errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {
                 min: 2
             }
@@ -260,7 +260,7 @@ const updateProfileSchema = {
         },
         matches : {
             options : ['/^(2|7|9){1}[0-9]{7}$/i'],
-            errorMessage : 'Invalid phone number'
+            errorMessage : 'Numéro de téléphone invalide'
         }
     }
 }

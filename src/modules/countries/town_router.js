@@ -6,18 +6,24 @@ import responseHandlerMiddleware from '../../middlewares/responseHandlerMiddlewa
 import validator from 'express-validator'
 import validationSchema from './validation.js'
 import {
-    getAll,
-    block,
-    save
+    getAllTownByCountry,
+    blockTown,
+    saveTown
 } from './controller.js'
 
 const router = express.Router()
 
-router.get('/',
+router.get('/getAllByCountryId/:id',
     cacheMiddleware.get,
+    validator.checkSchema(validationSchema.blockCountrySchema),
+    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAll(true)
+        const data = {
+            ...req.params
+        }
+
+        res.locals.data = await getAllTownByCountry(data)
 
         next()
     }),
@@ -25,11 +31,18 @@ router.get('/',
     responseHandlerMiddleware
 )
 
-router.get('/getAll',
+router.get('/getByCountryId/:id',
     cacheMiddleware.get,
+    validator.checkSchema(validationSchema.blockCountrySchema),
+    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAll()
+        const data = {
+            ...req.params,
+            status : true
+        }
+
+        res.locals.data = await getAllTownByCountry(data)
 
         next()
     }),
@@ -38,7 +51,7 @@ router.get('/getAll',
 )
 
 router.get('/block/:id',
-    validator.checkSchema(validationSchema.blockSchema),
+    validator.checkSchema(validationSchema.blockCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
@@ -46,7 +59,7 @@ router.get('/block/:id',
             ...req.params
         }
 
-        res.locals.data = await block(data)
+        res.locals.data = await blockTown(data)
 
         next()
     }),
@@ -55,7 +68,7 @@ router.get('/block/:id',
 )
 
 router.post('/save',
-    validator.checkSchema(validationSchema.saveSchema),
+    validator.checkSchema(validationSchema.saveTownSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
@@ -63,7 +76,7 @@ router.post('/save',
             ...req.body
         }
 
-        res.locals.data = await save(data)
+        res.locals.data = await saveTown(data)
 
         next()
     }),

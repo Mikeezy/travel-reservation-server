@@ -6,9 +6,9 @@ import responseHandlerMiddleware from '../../middlewares/responseHandlerMiddlewa
 import validator from 'express-validator'
 import validationSchema from './validation.js'
 import {
-    getAll,
-    block,
-    save
+    getAllCountry,
+    blockCountry,
+    saveCountry
 } from './controller.js'
 
 const router = express.Router()
@@ -17,7 +17,7 @@ router.get('/',
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAll(true)
+        res.locals.data = await getAllCountry(true)
 
         next()
     }),
@@ -29,7 +29,7 @@ router.get('/getAll',
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAll()
+        res.locals.data = await getAllCountry()
 
         next()
     }),
@@ -38,7 +38,7 @@ router.get('/getAll',
 )
 
 router.get('/block/:id',
-    validator.checkSchema(validationSchema.blockSchema),
+    validator.checkSchema(validationSchema.blockCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
@@ -46,7 +46,7 @@ router.get('/block/:id',
             ...req.params
         }
 
-        res.locals.data = await block(data)
+        res.locals.data = await blockCountry(data)
 
         next()
     }),
@@ -55,7 +55,7 @@ router.get('/block/:id',
 )
 
 router.post('/save',
-    validator.checkSchema(validationSchema.saveSchema),
+    validator.checkSchema(validationSchema.saveCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
@@ -63,7 +63,7 @@ router.post('/save',
             ...req.body
         }
 
-        res.locals.data = await save(data)
+        res.locals.data = await saveCountry(data)
 
         next()
     }),
