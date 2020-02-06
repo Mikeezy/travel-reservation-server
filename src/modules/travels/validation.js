@@ -31,12 +31,12 @@ const saveSchema = {
         }
     },
     from: {
-        in: 'params',
+        in: 'body',
         isMongoId: true,
         errorMessage: 'Lieu de départ invalide'
     },
     to: {
-        in: 'params',
+        in: 'body',
         isMongoId: true,
         errorMessage: `Lieu d'arrivé invalide`
     },
@@ -91,8 +91,27 @@ const saveSchema = {
     }
 }
 
+const searchSchema = {
+    from: {
+        in: 'body',
+        isMongoId: true,
+        errorMessage: 'Lieu de départ invalide'
+    },
+    to: {
+        in: 'body',
+        isMongoId: true,
+        errorMessage: `Lieu d'arrivé invalide`
+    },
+    date_departing: {
+        in: 'body',
+        toDate: true,
+        errorMessage: 'Date de départ invalide'
+    }
+}
+
 
 export default {
     blockSchema,
-    saveSchema
+    saveSchema,
+    searchSchema
 }

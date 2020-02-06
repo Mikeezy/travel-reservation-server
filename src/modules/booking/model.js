@@ -6,7 +6,6 @@ let bookingSchema = new Schema({
     user : {type: Schema.Types.ObjectId, ref: 'user'},
     travel : {type: Schema.Types.ObjectId, ref: 'travel'},
     date_booking : { type: Date, default: Date.now },
-    date_depart : Date,
     guest : Schema.Types.Mixed,
     isGuest : {type :Boolean, default:true},
     passenger_number : {type :Number, default:1},

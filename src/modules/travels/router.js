@@ -8,7 +8,8 @@ import validationSchema from './validation.js'
 import {
     getAll,
     block,
-    save
+    save,
+    search
 } from './controller.js'
 
 const router = express.Router()
@@ -39,6 +40,24 @@ router.get('/block/:id',
         next()
     }),
     cacheMiddleware.clear,
+    responseHandlerMiddleware
+)
+
+router.post('/search',
+    cacheMiddleware.getByBody,
+    validator.checkSchema(validationSchema.searchSchema),
+    validationHandlerMiddleware,
+    asyncMiddleware(async (req, res, next) => {
+
+        const data = {
+            ...req.body
+        }
+
+        res.locals.data = await search(data)
+
+        next()
+    }),
+    cacheMiddleware.setByBody,
     responseHandlerMiddleware
 )
 
