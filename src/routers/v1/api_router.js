@@ -4,6 +4,7 @@ import userRouter from '../../modules/users/router.js'
 import countryRouter from '../../modules/countries/country_router.js'
 import townRouter from '../../modules/countries/town_router.js'
 import busRouter from '../../modules/bus/router.js'
+import travelRouter from '../../modules/travels/router.js'
 
 const router = express.Router()
 
@@ -20,6 +21,7 @@ router.use('/user',userRouter)
 router.use('/country',countryRouter)
 router.use('/town',townRouter)
 router.use('/bus',busRouter)
+router.use('/travel',travelRouter)
 
 
 

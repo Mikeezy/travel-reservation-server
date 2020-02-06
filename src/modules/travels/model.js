@@ -9,6 +9,9 @@ let travelSchema = new Schema({
     price : {type :Number, default:0},
     date_departing : Date,
     date_arriving : Date,
+    date_return : Date,
+    status : {type :Boolean, default:true},
+    created_at : { type: Date, default: Date.now },
     driving : [{
         bus : {type: Schema.Types.ObjectId, ref: 'bus'},
         driver : {type: Schema.Types.ObjectId, ref: 'user'}
