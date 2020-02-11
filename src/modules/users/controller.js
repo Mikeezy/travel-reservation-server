@@ -37,10 +37,10 @@ export async function block({
         _id: id
     }).select('_id blocked').exec()
 
-    if(userGet) {
+    if (userGet) {
 
         userGet.blocked = userGet.blocked === true ? false : true
-    
+
         await userGet.save()
     }
 
@@ -103,7 +103,7 @@ export async function auth({
 
     let userGet = await User.findOne({
         email
-    }).select('-uuid -driver -bookings').lean().exec()
+    }).select('-uuid -driver -bookings').exec()
 
     if (userGet) {
 
@@ -111,27 +111,26 @@ export async function auth({
 
         if (response === true) {
 
-            jwt.sign(userGet, privateKey, {
+            const jwtSignAsync = Promise.promisify(jwt.sign)
+
+            const token = await jwtSignAsync(JSON.parse(JSON.stringify(userGet)), privateKey, {
                 expiresIn
-            }, (error, token) => {
-
-                if (error) throw error
-
-                userGet.token = token
-
-                return userGet
-
             })
+
+            userGet = userGet.toObject()
+            userGet.token = token
+
+            return userGet
 
         } else {
 
-            throw new customError('Email or password incorrect, please retry !', 'AUTHENTICATION_ERROR')
+            throw new customError('Email ou mot de passe incorrect, veuillez réessayer svp !', 'AUTHENTICATION_ERROR')
 
         }
 
     } else {
 
-        throw new customError('Email or password incorrect, please retry !', 'AUTHENTICATION_ERROR')
+        throw new customError('Email ou mot de passe incorrect, veuillez réessayer svp !', 'AUTHENTICATION_ERROR')
 
     }
 
@@ -196,30 +195,32 @@ export async function checkToken({
     token
 }) {
 
-    jwt.verify(token, privateKey, (error, decoded) => {
+    const jwtVerifyAsync = Promise.promisify(jwt.verify)
 
-        if (error) {
-
-            if (error.name === 'TokenExpiredError') {
-
-                throw new customError('Token validity expired, please restart the process !', 'TOKEN_EXPIRED')
-
-            } else if (error.name === 'JsonWebTokenError') {
-
-                throw new customError('Invalid Token, please retry !', 'TOKEN_INVALID')
-
-            } else {
-
-                throw error
-
-            }
-
-        }
+    try {
+    
+        const decoded = await jwtVerifyAsync(token, privateKey)
 
         return decoded
 
-    });
+    } catch (error) {
+    
+        if (error.name === 'TokenExpiredError') {
 
+            throw new customError('La validité du token a expiré, veuillez recommencer le processus svp !', 'TOKEN_EXPIRED')
+
+        } else if (error.name === 'JsonWebTokenError') {
+
+            throw new customError('Le token est invalide, veuillez réessayer svp !', 'TOKEN_INVALID')
+
+        } else {
+
+            throw error
+
+        }
+
+    }
+    
 }
 
 export async function resetPasswordPartOne({

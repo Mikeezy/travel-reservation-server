@@ -1,5 +1,4 @@
 import express from 'express'
-import authMiddleware from '../../middlewares/authMiddleware.js'
 import userRouter from '../../modules/users/router.js'
 import countryRouter from '../../modules/countries/country_router.js'
 import townRouter from '../../modules/countries/town_router.js'
@@ -21,9 +20,6 @@ router.use((req,res,next) => {
 
 router.use('/travel',travelRouter)
 router.use('/booking',bookingRouter)
-
-router.use(authMiddleware)
-
 router.use('/user',userRouter)
 router.use('/country',countryRouter)
 router.use('/town',townRouter)

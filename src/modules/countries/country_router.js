@@ -1,4 +1,5 @@
 import express from 'express'
+import authMiddleware from '../../middlewares/authMiddleware.js'
 import cacheMiddleware from '../../middlewares/cacheMiddleware.js'
 import validationHandlerMiddleware from '../../middlewares/validationHandlerMiddleware.js'
 import asyncMiddleware from '../../middlewares/asyncMiddleware.js'
@@ -13,6 +14,7 @@ import {
 
 const router = express.Router()
 
+
 router.get('/',
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
@@ -26,6 +28,7 @@ router.get('/',
 )
 
 router.get('/getAll',
+    authMiddleware,
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
@@ -38,6 +41,7 @@ router.get('/getAll',
 )
 
 router.get('/block/:id',
+    authMiddleware,
     validator.checkSchema(validationSchema.blockCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
@@ -55,6 +59,7 @@ router.get('/block/:id',
 )
 
 router.post('/save',
+    authMiddleware,
     validator.checkSchema(validationSchema.saveCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {

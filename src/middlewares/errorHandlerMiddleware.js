@@ -1,5 +1,6 @@
 import {
-    PropertyInvalidWithMessageError
+    PropertyInvalidWithMessageError,
+    handleError
 } from '../utils/customError.js'
 
 export default async function handleErrorMiddleware(error, req, res, next) {

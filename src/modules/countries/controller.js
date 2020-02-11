@@ -5,11 +5,16 @@ export async function getAllCountry(status = false) {
     const request = {
 
     }
+
+    let select = '-towns'
     
-    if(status) request.status = true
+    if(status) {
+        request.status = true
+        select += ' -status'
+    }
 
     const data = await Country.find(request)
-        .select('-towns')
+        .select(select)
         .sort('name')
         .exec()
 
@@ -21,9 +26,20 @@ export async function getAllTownByCountry({id,status = false}) {
         _id : id
     }
 
-    if(status) request['towns.status'] = true
+    let result = []
 
-    const data = await Country.findOne(request).sort('towns.name').exec()
+    let data = await Country.findOne(request).sort('towns.name').exec()
+
+    if(status) {
+
+        data = data.toObject()
+
+        result = data.towns.filter((doc) => {
+            return doc.status === true
+        })
+
+        return result
+    }
 
     return data.towns
 }
@@ -54,9 +70,15 @@ export async function blockTown({id}) {
 
     if(dataGet){
 
-        dataGet.towns[0].status = dataGet.towns[0].status === true ? false : true
-        
-        await dataGet.save()
+        await Country.findOneAndUpdate({
+            'towns._id' : id
+        },{
+            $set : {
+                'towns.$.status' : dataGet.towns[0].status === true ? false : true
+            }
+        },{
+            new : true
+        }).exec()
     }
 
 
@@ -70,7 +92,7 @@ export async function saveCountry ({id = null,...data}) {
 
         const dataSaved = await new Country(data).save()
 
-        return dataSaved
+        return null
 
     }else{
 
@@ -80,7 +102,7 @@ export async function saveCountry ({id = null,...data}) {
             new : true
         }).exec()
 
-        return dataSaved
+        return null
 
     }
 
@@ -90,7 +112,7 @@ export async function saveTown ({idCountry,...data}) {
 
     if(!data.id){
 
-        const dataSaved = await Country.findOneAndUpdate({
+        await Country.findOneAndUpdate({
             _id : idCountry
         },{
             $push : {
@@ -100,22 +122,27 @@ export async function saveTown ({idCountry,...data}) {
             new : true
         })
 
-        return dataSaved
+        return null
 
     }else{
 
         const dataToSave = {
-            'towns.0.name' : data.name,
-            'towns.0.description' : data.description
+            'name' : data.name,
+            'description' : data.description || ''
         }
 
-        const dataSaved = await Country.findOneAndUpdate({
+        await Country.findOneAndUpdate({
+            _id : idCountry,
             'towns._id' : data.id
-        },dataToSave,{
+        },{
+            $set : {
+                'towns.$' : dataToSave
+            }
+        },{
             new : true
-        })
+        }).exec()
 
-        return dataSaved
+        return null
 
     }
 

@@ -1,4 +1,5 @@
 import express from 'express'
+import authMiddleware from '../../middlewares/authMiddleware.js'
 import cacheMiddleware from '../../middlewares/cacheMiddleware.js'
 import validationHandlerMiddleware from '../../middlewares/validationHandlerMiddleware.js'
 import asyncMiddleware from '../../middlewares/asyncMiddleware.js'
@@ -12,6 +13,8 @@ import {
 } from './controller.js'
 
 const router = express.Router()
+
+router.use(authMiddleware)
 
 router.get('/',
     cacheMiddleware.get,

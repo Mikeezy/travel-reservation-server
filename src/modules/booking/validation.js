@@ -8,6 +8,39 @@ const blockSchema = {
     }
 }
 
+const getAllSchema = {
+    offset: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 0
+            }
+        },
+        errorMessage: `Décalage invalide`
+    },
+    limit: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 1
+            }
+        },
+        errorMessage: `Limite invalide`
+    }
+}
+
 const referenceSchema = {
     reference: {
         in: 'params',
@@ -51,7 +84,7 @@ const saveSchema = {
                 checkFalsy: true,
             },
         },
-        toJson : true,
+        isJSON : true,
         errorMessage: 'Invité invalide'
     },
     travel: {
@@ -71,9 +104,38 @@ const saveSchema = {
     }
 }
 
+const searchSchema = {
+    from: {
+        in: 'body',
+        isMongoId: true,
+        errorMessage: 'Lieu de départ invalide'
+    },
+    to: {
+        in: 'body',
+        isMongoId: true,
+        errorMessage: `Lieu d'arrivé invalide`
+    },
+    date_departing: {
+        in: 'body',
+        toDate: true,
+        custom : {
+            options : (value) => {
+                
+                if(!moment(value).isValid()){
+                    throw new Error(`Date de départ invalide`)
+                }
+    
+                return true
+            }
+        }
+    }
+}
+
 
 export default {
     blockSchema,
     saveSchema,
-    referenceSchema
+    referenceSchema,
+    getAllSchema,
+    searchSchema
 }

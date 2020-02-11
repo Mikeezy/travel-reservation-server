@@ -38,6 +38,16 @@ const saveSchema = {
                 min : 2
             }
         }
+    },
+    id : {
+        in: 'body',
+        optional : {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        isMongoId: true,
+        errorMessage: 'Id invalide'
     }
 }
 

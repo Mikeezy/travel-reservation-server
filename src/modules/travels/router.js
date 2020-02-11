@@ -1,4 +1,5 @@
 import express from 'express'
+import authMiddleware from '../../middlewares/authMiddleware.js'
 import cacheMiddleware from '../../middlewares/cacheMiddleware.js'
 import validationHandlerMiddleware from '../../middlewares/validationHandlerMiddleware.js'
 import asyncMiddleware from '../../middlewares/asyncMiddleware.js'
@@ -8,17 +9,23 @@ import validationSchema from './validation.js'
 import {
     getAll,
     block,
-    save,
-    search
+    save
 } from './controller.js'
 
 const router = express.Router()
 
 router.get('/',
+    authMiddleware,
     cacheMiddleware.get,
+    validator.checkSchema(validationSchema.getAllSchema),
+    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAll(true)
+        const data = {
+            ...req.query
+        }
+
+        res.locals.data = await getAll(data)
 
         next()
     }),
@@ -27,6 +34,7 @@ router.get('/',
 )
 
 router.get('/block/:id',
+    authMiddleware,
     validator.checkSchema(validationSchema.blockSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
@@ -43,25 +51,10 @@ router.get('/block/:id',
     responseHandlerMiddleware
 )
 
-router.post('/search',
-    cacheMiddleware.getByBody,
-    validator.checkSchema(validationSchema.searchSchema),
-    validationHandlerMiddleware,
-    asyncMiddleware(async (req, res, next) => {
 
-        const data = {
-            ...req.body
-        }
-
-        res.locals.data = await search(data)
-
-        next()
-    }),
-    cacheMiddleware.setByBody,
-    responseHandlerMiddleware
-)
 
 router.post('/save',
+    authMiddleware,
     validator.checkSchema(validationSchema.saveSchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {

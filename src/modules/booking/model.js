@@ -8,9 +8,12 @@ let bookingSchema = new Schema({
     date_booking : { type: Date, default: Date.now },
     guest : Schema.Types.Mixed,
     isGuest : {type :Boolean, default:true},
+    status : {type :Boolean, default:true},
     passenger_number : {type :Number, default:1},
-    seat_number : [Number],
-    bus : {type: Schema.Types.ObjectId, ref: 'bus'},
+    seat_number : [{
+        number : Number,
+        bus : {type: Schema.Types.ObjectId, ref: 'bus'}
+    }],
     reference : { type: String, trim: true }
 },
 {

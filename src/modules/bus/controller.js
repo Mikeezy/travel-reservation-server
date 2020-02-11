@@ -39,7 +39,7 @@ export async function save ({id = null,...data}) {
 
         const dataSaved = await new Bus(data).save()
 
-        return dataSaved
+        return null
 
     }else{
 
@@ -49,7 +49,7 @@ export async function save ({id = null,...data}) {
             new : true
         }).exec()
 
-        return dataSaved
+        return null
 
     }
 
