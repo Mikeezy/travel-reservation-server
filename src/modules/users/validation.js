@@ -12,7 +12,7 @@ const authSchema = {
         isLength: {
             errorMessage: 'Le mot de passe doit contenir au moins 7 caractères svp !',
             options: {
-                min: 7
+                min: 5
             }
         }
     }

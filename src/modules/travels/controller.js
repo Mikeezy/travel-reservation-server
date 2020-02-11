@@ -3,33 +3,60 @@ import Country from '../countries/model.js'
 import Promise from 'bluebird'
 
 
-export async function getAll() {
+
+export async function getAll({
+    offset = 0,
+    limit = 5
+}) {
+
+    const dataArray = []
 
     const data = await Travel.find()
+        .skip(+offset)
+        .limit(+limit)
+        .select('-created_at')
         .sort('-date_departing')
-        .populate('driving.bus driving.driver')
+        .populate({
+            path: 'driving.bus',
+            select: 'name capacity'
+        })
+        .populate({
+            path: 'driving.driver',
+            select: 'lastname firstname'
+        })
+        .lean()
         .cursor()
-        .on('data', async function (doc) {
+        .eachAsync(async function (doc) {
 
-            const fromPromise = Country.findOne({
-                'towns._id': doc.from
-            }, {
-                'towns.$': 1
-            }).exec()
+            if (doc) {
 
-            const toPromise = Country.findOne({
-                'towns._id': doc.to
-            }, {
-                'towns.$': 1
-            }).exec()
+                const fromPromise = Country.findOne({
+                    'towns._id': doc.from
+                }, {
+                    'towns.$': 1
+                }).select('name description').exec()
 
-            const [from, to] = await Promise.all([fromPromise, toPromise])
+                const toPromise = Country.findOne({
+                    'towns._id': doc.to
+                }, {
+                    'towns.$': 1
+                }).select('name description').exec()
 
-            doc.from = from.towns[0]
-            doc.to = to.towns[0]
+                const [from, to] = await Promise.all([fromPromise, toPromise])
+
+
+                doc.from = from.towns[0]
+                doc.to = to.towns[0]
+
+                return dataArray.push(doc)
+
+            }
+
+            return null
 
         })
-        .exec()
+        .then(() => new Promise(resolve => resolve(dataArray)))
+
 
     return data
 }
@@ -56,6 +83,7 @@ export async function block({
 
 export async function save({
     id = null,
+    driving,
     ...data
 }) {
 
@@ -63,9 +91,19 @@ export async function save({
 
         const dataSaved = await new Travel(data).save()
 
-        return dataSaved
+        driving.forEach((value) => {
+
+            dataSaved.driving.push(value)
+
+        })
+
+        await dataSaved.save()
+
+        return null
 
     } else {
+
+        data.driving = driving
 
         const dataSaved = await Travel.findOneAndUpdate({
             _id: id
@@ -73,7 +111,7 @@ export async function save({
             new: true
         }).exec()
 
-        return dataSaved
+        return null
 
     }
 

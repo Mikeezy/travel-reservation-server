@@ -10,15 +10,50 @@ function getKeyFromRequest(req) {
     return key
 }
 
+function getKeyFromRequestBody(req) {
+
+    let key = req.originalUrl
+
+    let parameters = {
+        ...req.body
+    }
+
+
+    for(let value of Object.values(parameters)){
+
+        key = key + `/${value}`
+
+    }
+
+    return key
+}
+
 async function get(req, res, next) {
 
     const key = getKeyFromRequest(req)
 
     const data = await client.getAsync(key)
+    
+    if(data) {
+        
+        const dataToReturn = successMessage(JSON.parse(data))
+        return res.status(200).json(dataToReturn)
 
+    }
+
+    return next()
+
+}
+
+async function getByBody(req, res, next) {
+
+    const key = getKeyFromRequestBody(req)
+
+    const data = await client.getAsync(key)
+    
     if(data) {
 
-        const dataToReturn = successMessage(data)
+        const dataToReturn = successMessage(JSON.parse(data))
         return res.status(200).json(dataToReturn)
 
     }
@@ -31,7 +66,21 @@ async function set(req, res, next) {
 
     const key = getKeyFromRequest(req)
 
-    await client.setAsync(key,res.locals.data,'EX',ttl)
+    const value = res.locals.data
+    
+    await client.setAsync(key,JSON.stringify(value),'EX',ttl)
+
+    return next()
+
+}
+
+async function setByBody(req, res, next) {
+
+    const key = getKeyFromRequestBody(req)
+
+    const value = res.locals.data
+
+    await client.setAsync(key,JSON.stringify(value),'EX',ttl)
 
     return next()
 
@@ -41,8 +90,12 @@ async function clear (req,res,next) {
 
     const keysToDelete = req.baseUrl
     const dataToDelete = await client.keysAsync(`${keysToDelete}*`)
+    
 
-    client.del(dataToDelete)
+    if(dataToDelete.length > 0) {
+
+        await client.delAsync(dataToDelete)
+    }
 
     return next()
 
@@ -50,6 +103,8 @@ async function clear (req,res,next) {
 
 export default {
     get,
+    getByBody,
     set,
+    setByBody,
     clear
 }

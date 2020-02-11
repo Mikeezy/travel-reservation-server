@@ -9,7 +9,8 @@
   "scripts": {
     "start": "NODE_ENV=production pm2 start ./src/server.js -i 3 --name labbaik_backend",
     "dev": "NODE_ENV=development nodemon ./src/server.js",
-    "test": "jest"
+    "test": "jest",
+    "test:dev": "NODE_ENV=development mocha"
   },
   "repository": {
     "type": "git",
@@ -52,7 +53,9 @@
   "devDependencies": {
     "bufferutil": "^4.0.1",
     "canvas": "^2.6.1",
-    "jest": "^25.1.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^7.0.1",
     "utf-8-validate": "^5.0.2"
   },
   "engines": {

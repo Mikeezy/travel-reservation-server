@@ -1,4 +1,5 @@
 import express from 'express'
+import authMiddleware from '../../middlewares/authMiddleware.js'
 import cacheMiddleware from '../../middlewares/cacheMiddleware.js'
 import validationHandlerMiddleware from '../../middlewares/validationHandlerMiddleware.js'
 import asyncMiddleware from '../../middlewares/asyncMiddleware.js'
@@ -14,6 +15,8 @@ import {
 } from './controller.js'
 
 const router = express.Router()
+
+router.use(authMiddleware)
 
 
 router.get('/',
@@ -51,7 +54,8 @@ router.post('/updatePassword',
     asyncMiddleware(async (req, res, next) => {
 
         const data = {
-            ...req.body
+            ...req.body,
+            user : res.locals.user
         }
 
         res.locals.data = await updatePassword(data)
@@ -67,7 +71,8 @@ router.post('/updateProfile',
     asyncMiddleware(async (req, res, next) => {
 
         const data = {
-            ...req.body
+            ...req.body,
+            user : res.locals.user
         }
 
         res.locals.data = await updateProfile(data)

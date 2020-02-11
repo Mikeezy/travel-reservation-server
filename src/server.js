@@ -59,7 +59,7 @@ app.use(errorHandlerMiddleware)
 
 // Handler
 
-process.on('unhandledRejection', (reason, p) => {
+/* process.on('unhandledRejection', (reason, p) => {
     
     throw reason
 
@@ -70,7 +70,7 @@ process.on('uncaughtException', async (error) => {
     const isOperationalError = await handleError(error)
     if (!isOperationalError) process.exit(1)
 
-})
+}) */
 
 // Lauch
 app.listen(port);
