@@ -1,19 +1,19 @@
 {
 	"email": {
-		"EMAIL_FROM": "",
-		"EMAIL_HEADER": "",
-		"EMAIL_USERNAME": "",
-		"EMAIL_PASSWORD": "",
-		"EMAIL_CLIENT_ID": "",
-		"EMAIL_CLIENT_SECRET": "",
-		"EMAIL_REFRESH_TOKEN": "",
+		"EMAIL_FROM": "Quizoor@gmail.com",
+		"EMAIL_HEADER": "Labbaik",
+		"EMAIL_USERNAME": "Quizoor@gmail.com",
+		"EMAIL_PASSWORD": "3333Quiz",
+		"EMAIL_CLIENT_ID": "658837219271-3t8q0lhtl85knbjjqf9cf2j5hj731gsq.apps.googleusercontent.com",
+		"EMAIL_CLIENT_SECRET": "wIjwoztJOUNGoohWaTF_PMA5",
+		"EMAIL_REFRESH_TOKEN": "1/wdgFI9votWWLKhW12z69toSJRlKQ7GtkYC-nbTOhI3A",
 		"EMAIL_ADMIN" : "['mikimus113@gmail.com']"
 	},
 
-	"DATABASE_URL": "",
+	"DATABASE_URL": "mongodb://labbaik:labbaik_2020@ds135421.mlab.com:35421/labbaik",
 	
-	"HOSTNAME_BACKEND": "",
-	"HOSTNAME_FRONTEND": "",
+	"HOSTNAME_BACKEND": "http://91.121.171.144:4152",
+	"HOSTNAME_FRONTEND": "http://91.121.171.144:4152",
 
 	"TOKEN_PRIVATE_KEY": "z9wsd72b-17a6-4K5e-8q784-7098deb98lcf",
 	"TOKEN_EXPIRE_USER": "24h",

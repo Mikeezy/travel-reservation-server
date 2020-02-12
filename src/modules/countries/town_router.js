@@ -9,12 +9,12 @@ import validationSchema from './validation.js'
 import {
     getAllTownByCountry,
     blockTown,
-    saveTown
+    saveTown,
+    getAllTowns
 } from './controller.js'
 
 const router = express.Router()
 
-router.use(authMiddleware)
 
 router.get('/getAllByCountryId/:id',
     authMiddleware,
@@ -28,6 +28,18 @@ router.get('/getAllByCountryId/:id',
         }
 
         res.locals.data = await getAllTownByCountry(data)
+
+        next()
+    }),
+    cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.get('/getAll',
+    cacheMiddleware.get,
+    asyncMiddleware(async (req, res, next) => {
+
+        res.locals.data = await getAllTowns()
 
         next()
     }),

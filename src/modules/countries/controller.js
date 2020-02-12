@@ -21,6 +21,48 @@ export async function getAllCountry(status = false) {
     return data
 }
 
+export async function getAllTowns() {
+    
+    let dataArray = []
+
+    const data = await Country.find({
+            status : true
+        })
+        .lean()
+        .cursor()
+        .eachAsync(async function (doc) {
+
+            if (doc) {
+                
+                doc.towns.forEach((town) => {
+
+                    if(town.status) {
+
+                        dataArray.push({
+                            id : town._id,
+                            name : `${town.name} (${doc.name})`
+                        })
+
+                    }
+
+                })
+
+                return null
+
+            }
+
+            return null
+
+        })
+        .then(() => new Promise(resolve => resolve(dataArray)))
+
+        return data.sort((a,b) => {
+            return a.name.localeCompare(b.name)
+        })
+
+    
+}
+
 export async function getAllTownByCountry({id,status = false}) {
     const request = {
         _id : id
