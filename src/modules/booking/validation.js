@@ -84,8 +84,27 @@ const saveSchema = {
                 checkFalsy: true,
             },
         },
-        isJSON : true,
-        errorMessage: 'Invité invalide'
+        custom : {
+            options : (value) => {
+                
+                try {
+
+                    const obj = JSON.parse(JSON.stringify(value));
+
+                    if (obj && typeof obj === "object" && obj !== null) {
+                        
+                        return obj;
+                    }
+                    
+                    throw new Error('Invité invalide')
+
+                } catch (e) {
+                    
+                    throw new Error('Invité invalide')
+
+                }
+            }
+        }
     },
     travel: {
         in: 'body',

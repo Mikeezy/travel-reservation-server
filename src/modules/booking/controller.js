@@ -1,6 +1,7 @@
 import Booking from './model.js'
 import Travel from '../travels/model.js'
 import Country from '../countries/model.js'
+import User from '../users/model.js'
 import {
     customError,
     customSimpleError
@@ -421,6 +422,18 @@ export async function save({
             data.reference = reference
 
             const dataSaved = await new Booking(data).save()
+
+            if(data.user && guestKeys.length === 0){
+
+                await User.findOneAndUpdate({
+                    _id : data.user
+                },{
+                    $push : {
+                        bookings : dataSaved._id
+                    }
+                })
+
+            }
 
             return dataSaved
         }

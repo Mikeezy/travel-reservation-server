@@ -10,7 +10,8 @@
     "start": "NODE_ENV=production pm2 start ./src/server.js -i 3 --name labbaik_backend",
     "dev": "NODE_ENV=development nodemon ./src/server.js",
     "test": "jest",
-    "test:dev": "NODE_ENV=development mocha"
+    "seed:dev": "NODE_ENV=development mocha",
+    "seed:prod": "NODE_ENV=production mocha"
   },
   "repository": {
     "type": "git",
