@@ -73,7 +73,7 @@ const saveTownSchema = {
     }
 }
 
-export default {
+module.exports = {
     blockCountrySchema,
     saveCountrySchema,
     saveTownSchema

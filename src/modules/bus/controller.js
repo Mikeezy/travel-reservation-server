@@ -1,7 +1,7 @@
-import Bus from './model.js'
+const Bus = require('./model')
 
 
-export async function getAll(status = false) {
+exports.getAll = async function getAll(status = false) {
     const request = {
 
     }
@@ -15,7 +15,7 @@ export async function getAll(status = false) {
     return data
 }
 
-export async function block({id}) {
+exports.block = async function block({id}) {
 
     let dataGet = await Bus.findOne({
         _id: id
@@ -33,7 +33,7 @@ export async function block({id}) {
 
 }
 
-export async function save ({id = null,...data}) {
+exports.save = async function save ({id = null,...data}) {
 
     if(!id){
 

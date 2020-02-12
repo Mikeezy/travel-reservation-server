@@ -1,7 +1,7 @@
-import validator from 'express-validator'
-import {PropertyInvalidWithMessageError} from '../utils/customError.js'
+const validator = require('express-validator')
+const {PropertyInvalidWithMessageError} = require('../utils/customError')
 
-export default function (req,res,next){
+module.exports = function (req,res,next){
 
     const errors = validator.validationResult(req);
 

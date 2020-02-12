@@ -1,20 +1,20 @@
-import Booking from './model.js'
-import Travel from '../travels/model.js'
-import Country from '../countries/model.js'
-import User from '../users/model.js'
-import {
+const Booking = require('./model')
+const Travel = require('../travels/model')
+const Country = require('../countries/model')
+const User = require('../users/model')
+const {
     customError,
     customSimpleError
-} from '../../utils/customError.js'
-import Promise from 'bluebird'
-import mongoose from 'mongoose'
-import {
+} = require('../../utils/customError')
+const Promise = require('bluebird')
+const mongoose = require('mongoose')
+const {
     generateReference
-} from '../../utils/random.js'
-import moment from 'moment'
+} = require('../../utils/random')
+const moment = require('moment')
 
 
-export async function getAll({
+exports.getAll = async function getAll({
     offset = 0,
     limit = 5
 }) {
@@ -73,7 +73,7 @@ export async function getAll({
     return data
 }
 
-export async function getByReference({
+exports.getByReference = async function getByReference({
     reference
 }) {
 
@@ -142,7 +142,7 @@ export async function getByReference({
 
 }
 
-export async function block({
+exports.block = async function block({
     id
 }) {
 
@@ -162,7 +162,7 @@ export async function block({
 
 }
 
-export async function getRemainingPlace({
+exports.getRemainingPlace = async function getRemainingPlace({
     travelId
 }) {
 
@@ -207,7 +207,7 @@ export async function getRemainingPlace({
 
 }
 
-export async function search({
+exports.search = async function search({
     from,
     to,
     date_departing
@@ -230,10 +230,6 @@ export async function search({
         .populate({
             path: 'driving.bus',
             select: 'name capacity'
-        })
-        .populate({
-            path: 'driving.driver',
-            select: 'lastname firstname'
         })
         .lean()
         .cursor()
@@ -340,7 +336,7 @@ async function getRemainingPlaceByBus(totalRemaining,indexCurrentCapacity,allCap
 
 }
 
-export async function save({
+exports.save = async function save({
     id = null,
     ...data
 }) {

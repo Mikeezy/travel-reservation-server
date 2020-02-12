@@ -1,5 +1,5 @@
 
-export function successMessage (data,...rest) {
+exports.successMessage = function successMessage (data,...rest) {
 
     let dataToReturn = {
         success : true,

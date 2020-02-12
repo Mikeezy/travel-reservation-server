@@ -1,6 +1,6 @@
-import logger from '../utils/logger.js'
+const logger = require('../utils/logger')
 
-export default function logErrorMiddleware(error, req, res, next) {
+module.exports = function logErrorMiddleware(error, req, res, next) {
 
     if (typeof error.isLogged === 'undefined' || error.isLogged) {
 

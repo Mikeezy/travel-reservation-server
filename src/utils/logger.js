@@ -1,5 +1,5 @@
-import winston from 'winston'
-import moment from 'moment'
+const winston = require('winston')
+const moment = require('moment')
 const {
     combine,
     timestamp,
@@ -44,4 +44,4 @@ const logger = winston.createLogger({
     exitOnError : false
 });
 
-export default logger
+module.exports = logger

@@ -1,7 +1,7 @@
-import Country from './model.js'
+const Country = require('./model')
 
 
-export async function getAllCountry(status = false) {
+exports.getAllCountry = async function getAllCountry(status = false) {
     const request = {
 
     }
@@ -21,7 +21,7 @@ export async function getAllCountry(status = false) {
     return data
 }
 
-export async function getAllTowns() {
+exports.getAllTowns = async function getAllTowns() {
     
     let dataArray = []
 
@@ -63,7 +63,7 @@ export async function getAllTowns() {
     
 }
 
-export async function getAllTownByCountry({id,status = false}) {
+exports.getAllTownByCountry = async function getAllTownByCountry({id,status = false}) {
     const request = {
         _id : id
     }
@@ -86,7 +86,7 @@ export async function getAllTownByCountry({id,status = false}) {
     return data.towns
 }
 
-export async function blockCountry({id}) {
+exports.blockCountry = async function blockCountry({id}) {
 
     let dataGet = await Country.findOne({
         _id: id
@@ -104,7 +104,7 @@ export async function blockCountry({id}) {
 
 }
 
-export async function blockTown({id}) {
+exports.blockTown = async function blockTown({id}) {
 
     let dataGet = await Country.findOne({
         'towns._id': id
@@ -128,7 +128,7 @@ export async function blockTown({id}) {
 
 }
 
-export async function saveCountry ({id = null,...data}) {
+exports.saveCountry = async function saveCountry ({id = null,...data}) {
 
     if(!id){
 
@@ -150,7 +150,7 @@ export async function saveCountry ({id = null,...data}) {
 
 }
 
-export async function saveTown ({idCountry,...data}) {
+exports.saveTown = async function saveTown ({idCountry,...data}) {
 
     if(!data.id){
 

@@ -1,6 +1,6 @@
-import {successMessage} from '../utils/response.js'
+const {successMessage} = require('../utils/response')
 
-export default function (req,res,next){
+module.exports = function (req,res,next){
 
     const dataToReturn = successMessage(res.locals.data)
     return res.status(200).json(dataToReturn)

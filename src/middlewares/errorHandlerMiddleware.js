@@ -1,9 +1,9 @@
-import {
+const {
     PropertyInvalidWithMessageError,
     handleError
-} from '../utils/customError.js'
+} = require('../utils/customError')
 
-export default async function handleErrorMiddleware(error, req, res, next) {
+module.exports = async function handleErrorMiddleware(error, req, res, next) {
 
     if (res.headersSent) {
 

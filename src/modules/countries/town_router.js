@@ -1,17 +1,17 @@
-import express from 'express'
-import authMiddleware from '../../middlewares/authMiddleware.js'
-import cacheMiddleware from '../../middlewares/cacheMiddleware.js'
-import validationHandlerMiddleware from '../../middlewares/validationHandlerMiddleware.js'
-import asyncMiddleware from '../../middlewares/asyncMiddleware.js'
-import responseHandlerMiddleware from '../../middlewares/responseHandlerMiddleware.js'
-import validator from 'express-validator'
-import validationSchema from './validation.js'
-import {
+const express = require('express')
+const authMiddleware = require('../../middlewares/authMiddleware')
+const cacheMiddleware = require('../../middlewares/cacheMiddleware')
+const validationHandlerMiddleware = require('../../middlewares/validationHandlerMiddleware')
+const asyncMiddleware = require('../../middlewares/asyncMiddleware')
+const responseHandlerMiddleware = require('../../middlewares/responseHandlerMiddleware')
+const validator = require('express-validator')
+const validationSchema = require('./validation')
+const {
     getAllTownByCountry,
     blockTown,
     saveTown,
     getAllTowns
-} from './controller.js'
+} = require('./controller')
 
 const router = express.Router()
 
@@ -103,4 +103,4 @@ router.post('/save',
 )
 
 
-export default router
+module.exports = router

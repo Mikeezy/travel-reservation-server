@@ -1,8 +1,8 @@
-import logger from './logger.js'
-import emailController from '../email/controller.js'
-import config from 'config'
+const logger = require('./logger')
+const emailController = require('../email/controller')
+const config = require('config')
 
-export class MyError extends Error {
+class MyError extends Error {
 
     constructor(message) {
         super(message)
@@ -13,7 +13,9 @@ export class MyError extends Error {
 
 }
 
-export class ValidationError extends MyError {
+exports.MyError = MyError
+
+class ValidationError extends MyError {
 
     constructor(message, isLogged = false) {
         super(message)
@@ -23,7 +25,9 @@ export class ValidationError extends MyError {
 
 }
 
-export class PropertyInvalidWithMessageError extends ValidationError {
+exports.ValidationError = ValidationError
+
+class PropertyInvalidWithMessageError extends ValidationError {
 
     constructor(property, message, isLogged = false) {
         super(message, isLogged);
@@ -33,7 +37,9 @@ export class PropertyInvalidWithMessageError extends ValidationError {
 
 }
 
-export class PropertyInvalidError extends PropertyInvalidWithMessageError {
+exports.PropertyInvalidWithMessageError =  PropertyInvalidWithMessageError
+
+class PropertyInvalidError extends PropertyInvalidWithMessageError {
 
     constructor(property, isLogged = false) {
         super(property, `${property} is required or invalid, please retry !`, isLogged);
@@ -41,7 +47,9 @@ export class PropertyInvalidError extends PropertyInvalidWithMessageError {
 
 }
 
-export class customError extends MyError {
+exports.PropertyInvalidError =  PropertyInvalidError
+
+class customError extends MyError {
 
     constructor(message, code = "ERROR", isLogged = false) {
         super(message)
@@ -51,7 +59,9 @@ export class customError extends MyError {
 
 }
 
-export class customErrorWithCause extends customError {
+exports.customError =  customError
+
+class customErrorWithCause extends customError {
 
     constructor(message, cause, code = "ERROR", isLogged = false) {
         super(message, code, isLogged)
@@ -60,7 +70,9 @@ export class customErrorWithCause extends customError {
 
 }
 
-export class customSimpleError extends customError {
+exports.customErrorWithCause =  customErrorWithCause
+
+class customSimpleError extends customError {
 
     constructor(isLogged = false) {
         super(`Operation failure, it seems like something went wrong, please retry !`, 'ERROR', isLogged)
@@ -68,7 +80,9 @@ export class customSimpleError extends customError {
 
 }
 
-export async function isOperationalError (error) {
+exports.customSimpleError =  customSimpleError
+
+exports.isOperationalError =  async function isOperationalError (error) {
 
     const response = error.isOperationalError
 
@@ -76,7 +90,7 @@ export async function isOperationalError (error) {
 
 }
 
-export async function logError (error) {
+exports.logError =  async function logError (error) {
 
     if (typeof error.isLogged === 'undefined' || error.isLogged) {
 
@@ -88,7 +102,7 @@ export async function logError (error) {
 
 }
 
-export async function sendMailToAdmin (error) {
+exports.sendMailToAdmin =  async function sendMailToAdmin (error) {
 
     if(process.env.NODE_ENV !== "development"){
 
@@ -125,7 +139,7 @@ export async function sendMailToAdmin (error) {
 
 }
 
-export async function handleError (error) {
+exports.handleError =  async function handleError (error) {
 
     await logError(error)
     await sendMailToAdmin(error)

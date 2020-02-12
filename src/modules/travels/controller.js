@@ -1,10 +1,10 @@
-import Travel from './model.js'
-import Country from '../countries/model.js'
-import Promise from 'bluebird'
+const Travel = require('./model')
+const Country = require('../countries/model')
+const Promise = require('bluebird')
 
 
 
-export async function getAll({
+exports.getAll = async function getAll({
     offset = 0,
     limit = 5
 }) {
@@ -19,10 +19,6 @@ export async function getAll({
         .populate({
             path: 'driving.bus',
             select: 'name capacity'
-        })
-        .populate({
-            path: 'driving.driver',
-            select: 'lastname firstname'
         })
         .lean()
         .cursor()
@@ -61,7 +57,7 @@ export async function getAll({
     return data
 }
 
-export async function block({
+exports.block = async function block({
     id
 }) {
 
@@ -81,7 +77,7 @@ export async function block({
 
 }
 
-export async function save({
+exports.save = async function save({
     id = null,
     driving,
     ...data

@@ -1,4 +1,4 @@
-import mongoose from '../../config/database.js'
+const mongoose = require('../../config/database')
 
 const Schema = mongoose.Schema;
 
@@ -22,4 +22,4 @@ let bookingSchema = new Schema({
 });
 
 
-export default mongoose.model('booking', bookingSchema)
+module.exports = mongoose.model('booking', bookingSchema)

@@ -52,7 +52,7 @@ const saveSchema = {
 }
 
 
-export default {
+module.exports = {
     blockSchema,
     saveSchema
 }

@@ -1,4 +1,4 @@
-export default function (req,res,next){
+module.exports = function (req,res,next){
 
     return res.status(200).json({
         success : false,

@@ -1,9 +1,7 @@
-import randToken from 'rand-token';
-import uuid from 'uuid';
+const randToken = require('rand-token')
+const uuidV1 = require('uuid/v1')
 
-const uuidV1 = uuid.v1
-
-export async function generateReference (schema, fields, taille) {
+exports.generateReference =  async function generateReference (schema, fields, taille) {
 
     const code = randToken.generate(taille);
 
@@ -23,7 +21,7 @@ export async function generateReference (schema, fields, taille) {
 
 }
 
-export async function generateUuid  (schema, fields)  {
+exports.generateUuid =  async function generateUuid  (schema, fields)  {
     
     const code = uuidV1();
 
