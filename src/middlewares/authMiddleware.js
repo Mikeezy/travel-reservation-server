@@ -1,10 +1,10 @@
-import jwt from 'jsonwebtoken'
-import {customError} from '../utils/customError.js'
-import config from 'config'
+const jwt = require('jsonwebtoken')
+const {customError} = require('../utils/customError')
+const config = require('config')
 
 const privateKey = config.get('TOKEN_PRIVATE_KEY')
 
-export default function (req, res, next) {
+module.exports = function (req, res, next) {
 
     let token = req.body.token || req.query.token || req.headers['authorization'];
 

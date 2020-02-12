@@ -1,6 +1,6 @@
-import Promise from 'bluebird'
+const Promise = require('bluebird')
 
-export default function (func) {
+module.exports = function (func) {
 
     return function (req, res, next) {
 

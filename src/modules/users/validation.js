@@ -1,4 +1,4 @@
-import User from './model.js'
+const User = require('./model')
 
 const authSchema = {
     email: {
@@ -265,7 +265,7 @@ const updateProfileSchema = {
     }
 }
 
-export default {
+module.exports = {
     auth: authSchema,
     signupAdminPartOneSchema,
     signupAdminPartTwoSchema,

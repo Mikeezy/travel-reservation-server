@@ -1,21 +1,21 @@
-import express from 'express'
-import cacheMiddleware from '../../middlewares/cacheMiddleware.js'
-import validationHandlerMiddleware from '../../middlewares/validationHandlerMiddleware.js'
-import asyncMiddleware from '../../middlewares/asyncMiddleware.js'
-import responseHandlerMiddleware from '../../middlewares/responseHandlerMiddleware.js'
-import validator from 'express-validator'
-import validationSchema from './validation.js'
-import {
+const express = require('express')
+const cacheMiddleware = require('../../middlewares/cacheMiddleware')
+const validationHandlerMiddleware = require('../../middlewares/validationHandlerMiddleware')
+const asyncMiddleware = require('../../middlewares/asyncMiddleware')
+const responseHandlerMiddleware = require('../../middlewares/responseHandlerMiddleware')
+const validator = require('express-validator')
+const validationSchema = require('./validation')
+const {
     auth,
     checkToken,
     signupAdminPartTwo,
     resetPasswordPartOne,
     resetPasswordPartTwo,
     resetPasswordPartThree
-} from './controller.js'
-import {
+} = require('./controller')
+const {
     authLimiterMiddleware
-} from '../../middlewares/rateLimitMiddleware.js'
+} = require('../../middlewares/rateLimitMiddleware')
 
 const router = express.Router()
 
@@ -139,4 +139,4 @@ router.get('/checkToken/:token',
     responseHandlerMiddleware
 )
 
-export default router
+module.exports = router

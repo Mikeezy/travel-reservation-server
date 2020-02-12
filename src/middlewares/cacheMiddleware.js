@@ -1,5 +1,5 @@
-import client from '../utils/redis.js'
-import {successMessage} from '../utils/response.js'
+const client = require('../utils/redis')
+const {successMessage} = require('../utils/response')
 
 const ttl = 15 * 60
 
@@ -101,7 +101,7 @@ async function clear (req,res,next) {
 
 }
 
-export default {
+module.exports = {
     get,
     getByBody,
     set,

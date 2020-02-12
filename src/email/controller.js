@@ -1,9 +1,9 @@
-import nodemailer  from 'nodemailer' 
-import handlebars  from 'handlebars' 
-import googleapis  from 'googleapis' 
-import fs  from 'fs' 
-import config from 'config'
-import path from "path"
+const nodemailer  = require('nodemailer')
+const handlebars  = require('handlebars')
+const googleapis  = require('googleapis')
+const fs  = require('fs')
+const config = require('config')
+const path = require('path')
 
 const OAuth2 = googleapis.google.auth.OAuth2;
 
@@ -13,7 +13,6 @@ const oauth2Client = new OAuth2(
     "https://developers.google.com/oauthplayground" // Redirect URL
 );
 
-const __dirname = path.resolve()
 
 oauth2Client.setCredentials({
     refresh_token:config.get('email.EMAIL_REFRESH_TOKEN')
@@ -142,7 +141,7 @@ const sendMail = async ({to,subject,content}) => {
     return info
 }
 
-export default {
+module.exports = {
     sendConfirmationMail,
     sendAfterRegisterMail,
     sendResetPasswordMail,

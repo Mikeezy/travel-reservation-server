@@ -1,8 +1,8 @@
-import mongoose from 'mongoose'
-import config from 'config'
+const mongoose = require('mongoose')
+const config = require('config')
 
 mongoose.connect(`${config.get('DATABASE_URL')}`,{ useNewUrlParser: true,useUnifiedTopology: true });
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 
-export default mongoose;
+module.exports = mongoose;

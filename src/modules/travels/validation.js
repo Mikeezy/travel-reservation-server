@@ -1,4 +1,4 @@
-import moment from 'moment'
+const moment = require('moment')
 
 const blockSchema = {
     id: {
@@ -149,7 +149,7 @@ const saveSchema = {
 
 
 
-export default {
+module.exports = {
     blockSchema,
     saveSchema,
     getAllSchema

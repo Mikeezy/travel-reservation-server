@@ -1,10 +1,10 @@
-import express from 'express'
-import userRouter from '../../modules/users/router.js'
-import countryRouter from '../../modules/countries/country_router.js'
-import townRouter from '../../modules/countries/town_router.js'
-import busRouter from '../../modules/bus/router.js'
-import travelRouter from '../../modules/travels/router.js'
-import bookingRouter from '../../modules/booking/router.js'
+const express = require('express')
+const userRouter = require('../../modules/users/router')
+const countryRouter = require('../../modules/countries/country_router')
+const townRouter = require('../../modules/countries/town_router')
+const busRouter = require('../../modules/bus/router')
+const travelRouter = require('../../modules/travels/router')
+const bookingRouter = require('../../modules/booking/router')
 
 const router = express.Router()
 
@@ -27,4 +27,4 @@ router.use('/bus',busRouter)
 
 
 
-export default router
+module.exports = router

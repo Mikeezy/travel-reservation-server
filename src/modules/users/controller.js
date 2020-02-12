@@ -1,16 +1,16 @@
-import User from './model.js'
-import {
+const User = require('./model.js')
+const {
     generateUuid
-} from '../../utils/random.js'
-import Promise from 'bluebird'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import emailController from '../../email/controller.js'
-import {
+} = require('../../utils/random')
+const Promise = require('bluebird')
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+const emailController = require('../../email/controller')
+const {
     customError,
     customSimpleError
-} from '../../utils/customError.js'
-import config from 'config'
+} = require('../../utils/customError')
+const config = require('config')
 
 const saltRound = 10;
 const privateKey = config.get('TOKEN_PRIVATE_KEY')
@@ -19,7 +19,7 @@ const tokenExpiry1h = config.get('TOKEN_EXPIRE_IN_SHORT')
 
 
 
-export async function getAll() {
+exports.getAll = async function getAll() {
 
     let data = await User.find({})
         .select('-uuid -driver -bookings')
@@ -29,7 +29,7 @@ export async function getAll() {
     return data
 }
 
-export async function block({
+exports.block = async function block({
     id
 }) {
 
@@ -48,7 +48,7 @@ export async function block({
 
 }
 
-export async function updateProfile({
+exports.updateProfile = async function updateProfile({
     user,
     ...data
 }) {
@@ -64,7 +64,7 @@ export async function updateProfile({
 }
 
 
-export async function updatePassword({
+exports.updatePassword = async function updatePassword({
     password,
     old_password,
     user
@@ -95,7 +95,7 @@ export async function updatePassword({
 }
 
 // Auth methods
-export async function auth({
+exports.auth = async function auth({
     email,
     password,
     expiresIn = tokenExpiry24h
@@ -137,7 +137,7 @@ export async function auth({
 
 }
 
-export async function signupAdminPartOne(data) {
+exports.signupAdminPartOne = async function signupAdminPartOne(data) {
 
     jwt.sign(data, privateKey, {
         expiresIn: tokenExpiry1h
@@ -166,7 +166,7 @@ export async function signupAdminPartOne(data) {
 
 }
 
-export async function signupAdminPartTwo(data) {
+exports.signupAdminPartTwo = async function signupAdminPartTwo(data) {
 
     let uuidPromise = generateUuid(User, 'uuid')
     let passwordHashPromise = bcrypt.hash(data.password, saltRound)
@@ -191,7 +191,7 @@ export async function signupAdminPartTwo(data) {
 
 }
 
-export async function checkToken({
+exports.checkToken = async function checkToken({
     token
 }) {
 
@@ -223,7 +223,7 @@ export async function checkToken({
     
 }
 
-export async function resetPasswordPartOne({
+exports.resetPasswordPartOne = async function resetPasswordPartOne({
     email
 }) {
 
@@ -261,7 +261,7 @@ export async function resetPasswordPartOne({
 
 }
 
-export async function resetPasswordPartTwo({
+exports.resetPasswordPartTwo = async function resetPasswordPartTwo({
     token
 }) {
 
@@ -297,7 +297,7 @@ export async function resetPasswordPartTwo({
 
 }
 
-export async function resetPasswordPartThree({
+exports.resetPasswordPartThree = async function resetPasswordPartThree({
     token,
     password
 }) {

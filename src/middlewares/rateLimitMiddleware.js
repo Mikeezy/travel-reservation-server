@@ -1,13 +1,13 @@
-import rateLimit from 'express-rate-limit'
-import redisStore from 'rate-limit-redis'
-import client from '../utils/redis.js'
+const rateLimit = require('express-rate-limit')
+const redisStore = require('rate-limit-redis')
+const client = require('../utils/redis')
 
 const store = new redisStore({
     client,
     expiry : 60 * 60
 })
 
-export function authLimiterMiddleware({
+exports.authLimiterMiddleware = function authLimiterMiddleware({
     max = 5,
     message = "Too many actions from you, please try again after an hour"
 }) {
@@ -32,7 +32,7 @@ export function authLimiterMiddleware({
 
 }
 
-export function apiLimiterMiddleware({
+exports.apiLimiterMiddleware = function apiLimiterMiddleware({
     time = 15 * 60 * 1000,
     max = 5,
     message = "Too many actions from you, please try again after 15 minutes"

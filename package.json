@@ -19,7 +19,6 @@
   },
   "author": "NABE Bammoy Minkitam",
   "license": "MIT",
-  "type": "module",
   "homepage": "https://bitbucket.org/masskoder/labbaik-backend#readme",
   "dependencies": {
     "async": "^3.1.1",
@@ -58,9 +57,5 @@
     "chai-as-promised": "^7.1.1",
     "mocha": "^7.0.1",
     "utf-8-validate": "^5.0.2"
-  },
-  "engines": {
-    "node": ">= 13.7.0",
-    "npm": ">= 6.13.6"
   }
 }

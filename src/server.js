@@ -1,22 +1,19 @@
-import express from 'express'
-import path, {
-    join
-} from "path"
-import bodyParser from 'body-parser'
-import helmet from 'helmet'
-import cors from 'cors'
-import morgan from 'morgan'
-import errorHandlerMiddleware from './middlewares/errorHandlerMiddleware.js'
-import notFindMiddleware from './middlewares/notFindMiddleware.js'
-import v1Router from './routers/v1/api_router.js'
-import authRouter from './routers/v1/auth_router.js'
-import {
+const express = require('express')
+const path = require('path')
+const bodyParser = require('body-parser')
+const helmet = require('helmet')
+const cors = require('cors')
+const morgan = require('morgan')
+const errorHandlerMiddleware = require('./middlewares/errorHandlerMiddleware')
+const notFindMiddleware = require('./middlewares/notFindMiddleware')
+const v1Router = require('./routers/v1/api_router')
+const authRouter = require('./routers/v1/auth_router')
+const {
     handleError
-} from './utils/customError.js'
+} = require('./utils/customError')
 
 const app = express()
 const port = process.env.PORT || 4152
-const __dirname = path.resolve()
 
 // Configuration
 
@@ -25,7 +22,7 @@ app.use(cors())
 if (process.env.NODE_ENV === "production") {
 
     app.use(helmet())
-    app.set('trust proxy',1)
+    //app.set('trust proxy',1)
 
 }
 
@@ -35,9 +32,9 @@ if (process.env.NODE_ENV === "development") {
 
 }
 
-app.use(express.static(join(__dirname, '/uploads')));
+app.use(express.static(path.join(__dirname, '/uploads')));
 
-app.use(express.static(join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/public')));
 
 
 app.use(bodyParser.json({
