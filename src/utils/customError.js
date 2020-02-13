@@ -108,7 +108,7 @@ exports.logError =  logError
 
 async function sendMailToAdmin (error) {
 
-    const check = error instanceof PropertyInvalidWithMessageError
+    const check = await isOperationalError(error)
 
     if(process.env.NODE_ENV !== "development" && !check){
 
