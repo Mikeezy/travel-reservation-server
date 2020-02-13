@@ -18,9 +18,9 @@ const router = express.Router()
 
 router.get('/getAllByCountryId/:id',
     authMiddleware,
-    cacheMiddleware.get,
     validator.checkSchema(validationSchema.blockCountrySchema),
     validationHandlerMiddleware,
+    cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
         const data = {
@@ -48,9 +48,9 @@ router.get('/getAll',
 )
 
 router.get('/getByCountryId/:id',
-    cacheMiddleware.get,
     validator.checkSchema(validationSchema.blockCountrySchema),
     validationHandlerMiddleware,
+    cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
         const data = {

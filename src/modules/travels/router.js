@@ -16,9 +16,9 @@ const router = express.Router()
 
 router.get('/',
     authMiddleware,
-    cacheMiddleware.get,
     validator.checkSchema(validationSchema.getAllSchema),
     validationHandlerMiddleware,
+    cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
         const data = {
