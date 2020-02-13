@@ -1,4 +1,7 @@
 const moment = require('moment')
+const User = require('../users/model')
+const Travel = require('../travels/model')
+const Country = require('../countries/model')
 
 const blockSchema = {
     id: {
@@ -75,7 +78,23 @@ const saveSchema = {
             },
         },
         isMongoId: true,
-        errorMessage: 'Utilisateur invalide'
+        errorMessage: 'Utilisateur invalide',
+        bail: true,
+        custom: {
+            options: async (value) => {
+
+                const user = await User.findOne({
+                    _id: value
+                }).select('_id').exec()
+
+                if (!user) {
+                    throw new Error(`Cet utilisateur n'existe pas, veuillez réessayer svp !`);
+                }
+
+                return true
+
+            }
+        }
     },
     guest: {
         in: 'body',
@@ -109,7 +128,23 @@ const saveSchema = {
     travel: {
         in: 'body',
         isMongoId: true,
-        errorMessage: 'Voyage invalide'
+        errorMessage: 'Voyage invalide',
+        bail: true,
+        custom: {
+            options: async (value) => {
+
+                const travel = await Travel.findOne({
+                    _id: value
+                }).select('_id').exec()
+
+                if (!travel) {
+                    throw new Error(`Ce voyage n'existe pas, veuillez réessayer svp !`);
+                }
+
+                return true
+
+            }
+        }
     },
     passenger_number: {
         in: 'body',
@@ -127,12 +162,46 @@ const searchSchema = {
     from: {
         in: 'body',
         isMongoId: true,
-        errorMessage: 'Lieu de départ invalide'
+        errorMessage: 'Lieu de départ invalide',
+        bail: true,
+        custom: {
+            options: async (value) => {
+
+                const town = await Country.findOne({
+                    'towns._id': value
+                },{'towns.$' : 1}).select('_id').exec()
+
+                if (!town) {
+                    throw new Error(`Cette ville n'existe pas, veuillez réessayer svp !`);
+                }
+
+                return true
+
+            }
+        }
     },
     to: {
         in: 'body',
         isMongoId: true,
-        errorMessage: `Lieu d'arrivé invalide`
+        errorMessage: `Lieu d'arrivé invalide`,
+        bail: true,
+        custom: {
+            options: async (value,{req}) => {
+
+                const town = await Country.findOne({
+                    'towns._id': value
+                },{'towns.$' : 1}).select('_id').exec()
+
+                if (!town) {
+                    throw new Error(`Cette ville n'existe pas, veuillez réessayer svp !`);
+                }else if(value === req.body.from){
+                    throw new Error(`Le lieu d'arrivé ne peut pas être égal au lieu de départ, veuillez réessayer svp !`);
+                }
+
+                return true
+
+            }
+        }
     },
     date_departing: {
         in: 'body',
