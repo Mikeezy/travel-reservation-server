@@ -138,11 +138,6 @@ const saveSchema = {
         in: 'body',
         isMongoId: true,
         errorMessage: 'Bus invalide'
-    },
-    'driving.*.driver': {
-        in: 'body',
-        isMongoId: true,
-        errorMessage: 'Chauffeur invalide'
     }
 }
 
