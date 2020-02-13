@@ -162,7 +162,7 @@ exports.block = async function block({
 
 }
 
-exports.getRemainingPlace = async function getRemainingPlace({
+async function getRemainingPlace({
     travelId
 }) {
 
@@ -206,6 +206,8 @@ exports.getRemainingPlace = async function getRemainingPlace({
     }
 
 }
+
+exports.getRemainingPlace = getRemainingPlace
 
 exports.search = async function search({
     from,
