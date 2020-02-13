@@ -7,7 +7,7 @@
 		"EMAIL_CLIENT_ID": "658837219271-3t8q0lhtl85knbjjqf9cf2j5hj731gsq.apps.googleusercontent.com",
 		"EMAIL_CLIENT_SECRET": "wIjwoztJOUNGoohWaTF_PMA5",
 		"EMAIL_REFRESH_TOKEN": "1/wdgFI9votWWLKhW12z69toSJRlKQ7GtkYC-nbTOhI3A",
-		"EMAIL_ADMIN" : "['mikimus113@gmail.com']"
+		"EMAIL_ADMIN" : ["mikimus113@gmail.com"]
 	},
 
 	"DATABASE_URL": "mongodb://localhost/labbaik",

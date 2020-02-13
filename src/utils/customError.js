@@ -124,7 +124,7 @@ async function sendMailToAdmin (error) {
                 <br/>
             `
             await emailController.sendMail({
-                to : JSON.parse(config.get('email.EMAIL_ADMIN')),
+                to : config.get('email.EMAIL_ADMIN'),
                 subject : "Critical error occured, please check it out",
                 content
             })
