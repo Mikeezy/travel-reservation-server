@@ -82,7 +82,7 @@ class customSimpleError extends customError {
 
 exports.customSimpleError =  customSimpleError
 
-exports.isOperationalError =  async function isOperationalError (error) {
+async function isOperationalError (error) {
 
     const response = error.isOperationalError
 
@@ -90,7 +90,9 @@ exports.isOperationalError =  async function isOperationalError (error) {
 
 }
 
-exports.logError =  async function logError (error) {
+exports.isOperationalError =  isOperationalError
+
+async function logError (error) {
 
     if (typeof error.isLogged === 'undefined' || error.isLogged) {
 
@@ -102,7 +104,9 @@ exports.logError =  async function logError (error) {
 
 }
 
-exports.sendMailToAdmin =  async function sendMailToAdmin (error) {
+exports.logError =  logError
+
+async function sendMailToAdmin (error) {
 
     if(process.env.NODE_ENV !== "development"){
 
@@ -139,10 +143,14 @@ exports.sendMailToAdmin =  async function sendMailToAdmin (error) {
 
 }
 
-exports.handleError =  async function handleError (error) {
+exports.sendMailToAdmin =  sendMailToAdmin
+
+async function handleError (error) {
 
     await logError(error)
     await sendMailToAdmin(error)
     return await isOperationalError(error)
 
 }
+
+exports.handleError =  handleError
