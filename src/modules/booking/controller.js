@@ -158,7 +158,7 @@ exports.getByUser = async function getByUser({
             select: 'date_booking reference travel',
             populate : {
                 path : 'travel',
-                select : 'name from to date_departing'
+                select : 'name from to date_departing date_arriving price'
             }
         })
         .lean()
@@ -190,7 +190,9 @@ exports.getByUser = async function getByUser({
                     name : book.travel.name,
                     from : from.towns[0].name ,
                     to : to.towns[0].name,
-                    date_departing : book.travel.date_departing
+                    date_departing : book.travel.date_departing,
+                    date_arriving : book.travel.date_arriving,
+                    price : book.travel.price
                 }
             })
 
