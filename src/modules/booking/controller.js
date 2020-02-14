@@ -12,6 +12,7 @@ const {
     generateReference
 } = require('../../utils/random')
 const moment = require('moment')
+const _async = require('async')
 
 
 exports.getAll = async function getAll({
@@ -139,6 +140,69 @@ exports.getByReference = async function getByReference({
     }
 
     throw new customError('Référence invalide, veuillez réessayer svp !', 'REFERENCE_INVALID')
+
+}
+
+exports.getByUser = async function getByUser({
+    id
+}) {
+
+    let dataArray = []
+
+    const data = await User.findOne({
+            _id : id
+        })
+        .select('bookings')
+        .populate({
+            path: 'bookings',
+            select: 'date_booking reference travel',
+            populate : {
+                path : 'travel',
+                select : 'name from to date_departing'
+            }
+        })
+        .lean()
+        .exec()
+
+
+    if(data.bookings && data.bookings.length > 0){
+
+        for await (book of data.bookings) {
+
+            const fromPromise = Country.findOne({
+                'towns._id': book.travel.from
+            }, {
+                'towns.$': 1
+            }).select('name').exec()
+
+            const toPromise = Country.findOne({
+                'towns._id': book.travel.to
+            }, {
+                'towns.$': 1
+            }).select('name').exec()
+
+            const [from,to] = await Promise.all([fromPromise, toPromise])
+
+            dataArray.push({
+                date_booking : book.date_booking,
+                reference : book.reference,
+                travel : {
+                    name : book.travel.name,
+                    from : from.towns[0].name ,
+                    to : to.towns[0].name,
+                    date_departing : book.travel.date_departing
+                }
+            })
+
+        }
+
+        return dataArray
+
+    }else{
+
+        return []
+
+    }
 
 }
 

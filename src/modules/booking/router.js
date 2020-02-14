@@ -11,7 +11,8 @@ const {
     block,
     getByReference,
     save,
-    search
+    search,
+    getByUser
 } = require('./controller')
 
 const router = express.Router()
@@ -50,6 +51,18 @@ router.get('/getByReference/:reference',
         next()
     }),
     cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.get('/getForUser',
+    authMiddleware,
+    asyncMiddleware(async (req, res, next) => {
+
+
+        res.locals.data = await getByUser({id : res.locals.user._id})
+
+        next()
+    }),
     responseHandlerMiddleware
 )
 
