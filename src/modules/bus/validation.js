@@ -6,6 +6,39 @@ const blockSchema = {
     }
 }
 
+const getAllSchema = {
+    offset: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 0
+            }
+        },
+        errorMessage: `Décalage invalide`
+    },
+    limit: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 1
+            }
+        },
+        errorMessage: `Limite invalide`
+    }
+}
+
 const saveSchema = {
     name: {
         in: 'body',
@@ -54,5 +87,6 @@ const saveSchema = {
 
 module.exports = {
     blockSchema,
-    saveSchema
+    saveSchema,
+    getAllSchema
 }

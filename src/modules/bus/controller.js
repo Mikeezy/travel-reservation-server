@@ -1,18 +1,34 @@
 const Bus = require('./model')
+const Promise = require('bluebird')
 
 
-exports.getAll = async function getAll(status = false) {
+exports.getAll = async function getAll({
+    offset = 0,
+    limit = 5,
+    status = false
+}) {
     const request = {
 
     }
     
     if(status) request.status = true
 
-    const data = await Bus.find(request)
+    const dataPromise = Bus.find(request)
+        .skip(+offset)
+        .limit(+limit)
         .sort('name')
         .exec()
 
-    return data
+    const totalPromise = Bus.find(request)
+        .countDocuments()
+        .exec()
+
+    const [data,total] = await Promise.all([dataPromise,totalPromise])
+
+    return {
+        total,
+        data
+    }
 }
 
 exports.block = async function block({id}) {
