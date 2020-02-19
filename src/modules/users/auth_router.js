@@ -44,7 +44,7 @@ router.post('/signinAdmin',
 
         const data = {
             ...req.body,
-            expiresIn : true
+            expiresIn: true
         }
 
         res.locals.data = await auth(data)
@@ -73,12 +73,12 @@ router.post('/signup',
 
 
 router.post('/signupAdminPartTwo/:token',
+    validator.checkSchema(validationSchema.signupAdminPartTwoSchema),
+    validationHandlerMiddleware,
     authLimiterMiddleware({
         max: 2,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
-    validator.checkSchema(validationSchema.signupAdminPartTwoSchema),
-    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
         const decoded = await checkToken({
@@ -98,12 +98,12 @@ router.post('/signupAdminPartTwo/:token',
 )
 
 router.get('/signupPartTwo/:token',
+    validator.checkSchema(validationSchema.signupPartTwoSchema),
+    validationHandlerMiddleware,
     authLimiterMiddleware({
         max: 2,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
-    validator.checkSchema(validationSchema.signupPartTwoSchema),
-    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
         const data = await checkToken({
@@ -119,12 +119,12 @@ router.get('/signupPartTwo/:token',
 )
 
 router.post('/resetPasswordPartOne',
+    validator.checkSchema(validationSchema.resetPasswordPartOneSchema),
+    validationHandlerMiddleware,
     authLimiterMiddleware({
         max: 2,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
-    validator.checkSchema(validationSchema.resetPasswordPartOneSchema),
-    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
         const data = {
@@ -139,12 +139,12 @@ router.post('/resetPasswordPartOne',
 )
 
 router.post('/resetPasswordPartTwo/:token',
+    validator.checkSchema(validationSchema.resetPasswordPartTwoSchema),
+    validationHandlerMiddleware,
     authLimiterMiddleware({
         max: 2,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
-    validator.checkSchema(validationSchema.resetPasswordPartTwoSchema),
-    validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
         const decoded = await checkToken({
