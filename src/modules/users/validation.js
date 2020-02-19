@@ -1,4 +1,5 @@
 const User = require('./model')
+const { parsePhoneNumberFromString } = require('libphonenumber-js')
 
 const authSchema = {
     email: {
@@ -15,6 +16,39 @@ const authSchema = {
                 min: 5
             }
         }
+    }
+}
+
+const getAllSchema = {
+    offset: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 0
+            }
+        },
+        errorMessage: `Décalage invalide`
+    },
+    limit: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 1
+            }
+        },
+        errorMessage: `Limite invalide`
     }
 }
 
@@ -43,8 +77,17 @@ const signupAdminPartOneSchema = {
     },
     role: {
         in: 'body',
-        isIn: ['super admin', 'admin', 'manager', 'user', 'driver'],
-        errorMessage: 'Role invalide'
+        custom : {
+            options : function(value) {
+                const check = ['admin', 'manager']
+                if(check.includes(value)){
+                    return true
+                }else{
+                    throw new Error('Role invalide');
+                }
+
+            }
+        }
     }
 }
 
@@ -101,14 +144,120 @@ const signupAdminPartTwoSchema = {
     },
     phone_number : {
         in: 'body',
-        optional : {
+        custom : {
+            options : function (value){
+                try {
+                
+                    const phoneNumber = parsePhoneNumberFromString(value)
+
+                    if(phoneNumber.isPossible()){
+                        return true
+                    }else{
+                        throw new Error(`Numéro de téléphone invalide`)
+                    }
+
+                } catch (e) {
+                    throw new Error(`Numéro de téléphone invalide`)
+                }
+            }
+        }
+    }
+}
+
+const signupPartTwoSchema = {
+    token: {
+        in: 'params',
+        isJWT: true,
+        errorMessage: 'Token invalide'
+    }
+}
+
+const signup = {
+    firstname: {
+        in: 'body',
+        trim: true,
+        escape: true,
+        isLength: {
+            errorMessage: 'Le prénom doit contenir au moins 2 caractères svp !',
             options: {
-                checkFalsy: true,
-            },
+                min: 2
+            }
+        }
+    },
+    lastname: {
+        in: 'body',
+        trim: true,
+        escape: true,
+        isLength: {
+            errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
+            options: {
+                min: 2
+            }
+        }
+    },
+    email: {
+        in: 'body',
+        isEmail: true,
+        normalizeEmail: true,
+        errorMessage: 'Email invalide',
+        bail: true,
+        custom: {
+            options: async (value) => {
+
+                const userEmail = await User.findOne({
+                    email: value
+                }).select('_id').exec()
+
+                if (userEmail) {
+                    throw new Error('Cet email est déjà utilisé, veuillez réessayer svp !');
+                }
+
+                return true
+
+            }
+        }
+    },
+    password: {
+        in: 'body',
+        isLength: {
+            errorMessage: 'Le mot de passe doit contenir au moins 7 caractères svp !',
+            options: {
+                min: 7
+            }
         },
-        matches : {
-            options : ['/^(2|7|9){1}[0-9]{7}$/i'],
-            errorMessage : 'Numéro de téléphone invalide'
+    },
+    confirm_password: {
+        in: 'body',
+        custom: {
+            options: (value, {req}) => {
+
+                if (value !== req.body.password) {
+                    throw new Error('Le mot de passe confirmé est différent du mot de passe, veuillez réessayer svp !');
+                }
+
+                return true
+
+            }
+        }
+    },
+    phone_number : {
+        in: 'body',
+        custom : {
+            options : function (value){
+                try {
+                
+                    const phoneNumber = parsePhoneNumberFromString(value)
+
+                    if(phoneNumber.isPossible()){
+                        return true
+                    }else{
+                        throw new Error(`Numéro de téléphone invalide`)
+                    }
+
+                } catch (e) {
+                    throw new Error(`Numéro de téléphone invalide`)
+                }
+            }
         }
     }
 }
@@ -141,14 +290,6 @@ const resetPasswordPartOneSchema = {
 const resetPasswordPartTwoSchema = {
     token: {
         in: 'params',
-        isJWT: true,
-        errorMessage: 'Token invalide'
-    }
-}
-
-const resetPasswordPartThreeSchema = {
-    token: {
-        in: 'body',
         isJWT: true,
         errorMessage: 'Token invalide'
     },
@@ -271,9 +412,11 @@ module.exports = {
     signupAdminPartTwoSchema,
     resetPasswordPartOneSchema,
     resetPasswordPartTwoSchema,
-    resetPasswordPartThreeSchema,
     checkTokenSchema,
     blockSchema,
     updatePasswordSchema,
-    updateProfileSchema
+    updateProfileSchema,
+    getAllSchema,
+    signup,
+    signupPartTwoSchema
 }

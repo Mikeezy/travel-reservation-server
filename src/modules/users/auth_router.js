@@ -8,10 +8,11 @@ const validationSchema = require('./validation')
 const {
     auth,
     checkToken,
+    signup,
     signupAdminPartTwo,
+    signupPartTwo,
     resetPasswordPartOne,
-    resetPasswordPartTwo,
-    resetPasswordPartThree
+    resetPasswordPartTwo
 } = require('./controller')
 const {
     authLimiterMiddleware
@@ -30,6 +31,39 @@ router.post('/signin',
         }
 
         res.locals.data = await auth(data)
+
+        next()
+    }),
+    responseHandlerMiddleware
+)
+
+router.post('/signinAdmin',
+    validator.checkSchema(validationSchema.auth),
+    validationHandlerMiddleware,
+    asyncMiddleware(async (req, res, next) => {
+
+        const data = {
+            ...req.body,
+            expiresIn : true
+        }
+
+        res.locals.data = await auth(data)
+
+        next()
+    }),
+    responseHandlerMiddleware
+)
+
+router.post('/signup',
+    validator.checkSchema(validationSchema.signup),
+    validationHandlerMiddleware,
+    asyncMiddleware(async (req, res, next) => {
+
+        const data = {
+            ...req.body
+        }
+
+        res.locals.data = await signup(data)
 
         next()
     }),
@@ -63,6 +97,27 @@ router.post('/signupAdminPartTwo/:token',
     responseHandlerMiddleware
 )
 
+router.get('/signupPartTwo/:token',
+    authLimiterMiddleware({
+        max: 2,
+        message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
+    }),
+    validator.checkSchema(validationSchema.signupPartTwoSchema),
+    validationHandlerMiddleware,
+    asyncMiddleware(async (req, res, next) => {
+
+        const data = await checkToken({
+            ...req.params
+        })
+
+        res.locals.data = await signupPartTwo(data)
+
+        next()
+    }),
+    cacheMiddleware.clear,
+    responseHandlerMiddleware
+)
+
 router.post('/resetPasswordPartOne',
     authLimiterMiddleware({
         max: 2,
@@ -83,7 +138,7 @@ router.post('/resetPasswordPartOne',
     responseHandlerMiddleware
 )
 
-router.get('/resetPasswordPartTwo/:token',
+router.post('/resetPasswordPartTwo/:token',
     authLimiterMiddleware({
         max: 2,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
@@ -92,31 +147,16 @@ router.get('/resetPasswordPartTwo/:token',
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
 
-        const data = {
+        const decoded = await checkToken({
             ...req.params
+        })
+
+        const data = {
+            ...req.body,
+            ...decoded
         }
 
         res.locals.data = await resetPasswordPartTwo(data)
-
-        next()
-    }),
-    responseHandlerMiddleware
-)
-
-router.post('/resetPasswordPartThree',
-    authLimiterMiddleware({
-        max: 2,
-        message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
-    }),
-    validator.checkSchema(validationSchema.resetPasswordPartThreeSchema),
-    validationHandlerMiddleware,
-    asyncMiddleware(async (req, res, next) => {
-
-        const data = {
-            ...req.body
-        }
-
-        res.locals.data = await resetPasswordPartThree(data)
 
         next()
     }),

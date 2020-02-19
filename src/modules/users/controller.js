@@ -19,14 +19,33 @@ const tokenExpiry1h = config.get('TOKEN_EXPIRE_IN_SHORT')
 
 
 
-exports.getAll = async function getAll() {
+exports.getAll = async function getAll({
+    offset = 0,
+    limit = 5
+}) {
 
-    let data = await User.find({})
+    const dataPromise = await User.find({
+            status : true,
+            role: {
+                $ne: "super admin"
+            }
+        })
+        .skip(+offset)
+        .limit(+limit)
         .select('-uuid -driver -bookings')
         .sort('lastname')
         .exec()
 
-    return data
+    const totalPromise = User.find()
+        .countDocuments()
+        .exec()
+
+    const [data, total] = await Promise.all([dataPromise, totalPromise])
+
+    return {
+        total,
+        data
+    }
 }
 
 exports.block = async function block({
@@ -98,7 +117,7 @@ exports.updatePassword = async function updatePassword({
 exports.auth = async function auth({
     email,
     password,
-    expiresIn = tokenExpiry24h
+    expiresIn
 }) {
 
     let userGet = await User.findOne({
@@ -113,9 +132,18 @@ exports.auth = async function auth({
 
             const jwtSignAsync = Promise.promisify(jwt.sign)
 
-            const token = await jwtSignAsync(JSON.parse(JSON.stringify(userGet)), privateKey, {
-                expiresIn
-            })
+            let token
+
+            if (expiresIn) {
+
+                token = await jwtSignAsync(userGet.toObject(), privateKey, {
+                    expiresIn: tokenExpiry24h
+                })
+            } else {
+
+                token = await jwtSignAsync(userGet.toObject(), privateKey)
+
+            }
 
             userGet = userGet.toObject()
             userGet.token = token
@@ -139,30 +167,28 @@ exports.auth = async function auth({
 
 exports.signupAdminPartOne = async function signupAdminPartOne(data) {
 
-    jwt.sign(data, privateKey, {
+    const jwtSignAsync = Promise.promisify(jwt.sign)
+
+    const token = await jwtSignAsync(data, privateKey, {
         expiresIn: tokenExpiry1h
-    }, async (error, token) => {
-
-        if (error) throw error
-
-        let emailInfo = await emailController.sendConfirmationMail({
-            to: data.email,
-            info: {
-                link: `${config.get('HOSTNAME_FRONTEND')}${config.get('LINK_CONFIRMATION_FRONTEND')}/${token}`
-            }
-        })
-
-        if (emailInfo) {
-
-            return null
-
-        } else {
-
-            throw new customSimpleError()
-
-        }
-
     })
+
+    let emailInfo = await emailController.sendConfirmationMail({
+        to: data.email,
+        info: {
+            link: `${config.get('HOSTNAME_FRONTEND')}${config.get('LINK_CONFIRMATION_FRONTEND_ADMIN')}/${token}`
+        }
+    })
+
+    if (emailInfo) {
+
+        return null
+
+    } else {
+
+        throw new customSimpleError()
+
+    }
 
 }
 
@@ -191,6 +217,61 @@ exports.signupAdminPartTwo = async function signupAdminPartTwo(data) {
 
 }
 
+exports.signup = async function signup(data) {
+
+    const jwtSignAsync = Promise.promisify(jwt.sign)
+
+    let uuidPromise = generateUuid(User, 'uuid')
+    let passwordHashPromise = bcrypt.hash(data.password, saltRound)
+
+    let [uuid, passwordHash] = await Promise.all([uuidPromise, passwordHashPromise])
+
+    delete data.confirm_password
+    data.password = passwordHash
+    data.uuid = uuid
+    data.role = "user"
+
+    let userCreated = await new User(data).save()
+
+    const token = await jwtSignAsync({
+        id: userCreated._id
+    }, privateKey, {
+        expiresIn: tokenExpiry1h
+    })
+
+    let emailInfo = await emailController.sendConfirmationMail({
+        to: data.email,
+        info: {
+            link: `${config.get('HOSTNAME_FRONTEND')}${config.get('LINK_CONFIRMATION_FRONTEND')}/${token}`
+        }
+    })
+
+    if (emailInfo) {
+
+        return null
+
+    } else {
+
+        throw new customSimpleError()
+
+    }
+
+}
+
+exports.signupPartTwo = async function signupPartTwo({
+    id
+}) {
+
+    await User.findOneAndUpdate({
+        _id: id
+    }, {
+        status: true
+    }).exec()
+
+    return null
+
+}
+
 exports.checkToken = async function checkToken({
     token
 }) {
@@ -198,13 +279,13 @@ exports.checkToken = async function checkToken({
     const jwtVerifyAsync = Promise.promisify(jwt.verify)
 
     try {
-    
+
         const decoded = await jwtVerifyAsync(token, privateKey)
 
         return decoded
 
     } catch (error) {
-    
+
         if (error.name === 'TokenExpiredError') {
 
             throw new customError('La validité du token a expiré, veuillez recommencer le processus svp !', 'TOKEN_EXPIRED')
@@ -220,122 +301,58 @@ exports.checkToken = async function checkToken({
         }
 
     }
-    
+
 }
 
 exports.resetPasswordPartOne = async function resetPasswordPartOne({
     email
 }) {
 
+    const jwtSignAsync = Promise.promisify(jwt.sign)
+
     let userGet = await User.findOne({
         email
     }).exec()
 
-    jwt.sign({
-        _id: userGet._id,
-        email: userGet.email
+    const token = await jwtSignAsync({
+        id: userGet._id
     }, privateKey, {
         expiresIn: tokenExpiry1h
-    }, async (error, token) => {
-
-        if (error) throw error
-
-        let emailInfo = await emailController.sendResetPasswordMail({
-            to: userGet.email,
-            info: {
-                link: `${config.get('HOSTNAME_FRONTEND')}${config.get('LINK_RESET_PASSWORD_FRONTEND')}/${token}`
-            }
-        })
-
-        if (emailInfo) {
-
-            return null
-
-        } else {
-
-            throw new customSimpleError()
-
-        }
-
     })
+
+    let emailInfo = await emailController.sendResetPasswordMail({
+        to: userGet.email,
+        info: {
+            link: `${config.get('HOSTNAME_FRONTEND')}${config.get('LINK_RESET_PASSWORD_FRONTEND')}/${token}`
+        }
+    })
+
+    if (emailInfo) {
+
+        return null
+
+    } else {
+
+        throw new customSimpleError()
+
+    }
+
 
 }
 
 exports.resetPasswordPartTwo = async function resetPasswordPartTwo({
-    token
-}) {
-
-    try {
-
-        await checkToken({
-            token
-        })
-
-        let dataToReturn = {
-            token
-        }
-
-        return dataToReturn
-
-    } catch (error) {
-
-        if (error.code === 'TOKEN_EXPIRED') {
-
-            throw new customError('The validity of the link has expired, please repeat the process !', error.code)
-
-        } else if (error.code === 'TOKEN_INVALID') {
-
-            throw new customError('This link is incorrect, please repeat the process !', error.code)
-
-        } else {
-
-            throw error
-
-        }
-
-    }
-
-}
-
-exports.resetPasswordPartThree = async function resetPasswordPartThree({
-    token,
+    id,
     password
 }) {
 
-    try {
+    const hash = await bcrypt.hash(password, saltRound)
 
-        let decodedPromise = checkToken({
-            token
-        })
+    await User.findOneAndUpdate({
+        _id: id
+    }, {
+        password: hash
+    }).exec()
 
-        let hashPromise = bcrypt.hash(password, saltRound)
-
-        let [decoded, hash] = await Promise.all([decodedPromise, hashPromise])
-
-        await User.findOneAndUpdate({
-            _id: decoded._id
-        }, {
-            password: hash
-        }).exec()
-
-        return null
-
-    } catch (error) {
-
-        if (error.code === 'TOKEN_EXPIRED') {
-
-            throw new customError('The validity of the link has expired, please repeat the process !', error.code)
-
-        } else if (error.code === 'TOKEN_INVALID') {
-
-            throw new customError('This link is incorrect, please repeat the process !', error.code)
-
-        } else {
-
-            throw error
-
-        }
-
-    }
+    return null
 
 }

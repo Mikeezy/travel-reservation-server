@@ -37,6 +37,7 @@
     "handlebars": "^4.7.2",
     "helmet": "^3.21.2",
     "jsonwebtoken": "^8.5.1",
+    "libphonenumber-js": "^1.7.44",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "mongoose": "^5.8.9",
