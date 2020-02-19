@@ -1,7 +1,11 @@
 const Country = require('./model')
 
 
-exports.getAllCountry = async function getAllCountry(status = false) {
+exports.getAllCountry = async function getAllCountry({
+    offset = 0,
+    limit = 5,
+    status = false
+}) {
     const request = {
 
     }
@@ -13,12 +17,24 @@ exports.getAllCountry = async function getAllCountry(status = false) {
         select += ' -status'
     }
 
-    const data = await Country.find(request)
+    const dataPromise = await Country.find(request)
+        .skip(+offset)
+        .limit(+limit)
         .select(select)
         .sort('name')
         .exec()
 
-    return data
+    const totalPromise = Country.find(request)
+        .countDocuments()
+        .exec()
+
+    const [data,total] = await Promise.all([dataPromise,totalPromise])
+
+    return {
+            total,
+            data
+        }
+
 }
 
 exports.getAllTowns = async function getAllTowns() {

@@ -14,12 +14,20 @@ const {
 
 const router = express.Router()
 
+router.use(authMiddleware)
 
 router.get('/',
+    validator.checkSchema(validationSchema.getAllSchema),
+    validationHandlerMiddleware,
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAllCountry(true)
+        const data = {
+            ...req.query,
+            status: true
+        }
+
+        res.locals.data = await getAllCountry(data)
 
         next()
     }),
@@ -28,11 +36,16 @@ router.get('/',
 )
 
 router.get('/getAll',
-    authMiddleware,
+    validator.checkSchema(validationSchema.getAllSchema),
+    validationHandlerMiddleware,
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAllCountry()
+        const data = {
+            ...req.query
+        }
+
+        res.locals.data = await getAllCountry(data)
 
         next()
     }),
@@ -41,7 +54,6 @@ router.get('/getAll',
 )
 
 router.get('/block/:id',
-    authMiddleware,
     validator.checkSchema(validationSchema.blockCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {
@@ -59,7 +71,6 @@ router.get('/block/:id',
 )
 
 router.post('/save',
-    authMiddleware,
     validator.checkSchema(validationSchema.saveCountrySchema),
     validationHandlerMiddleware,
     asyncMiddleware(async (req, res, next) => {

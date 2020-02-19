@@ -1,7 +1,7 @@
 {
 	"email": {
 		"EMAIL_FROM": "Quizoor@gmail.com",
-		"EMAIL_HEADER": "Quizoor",
+		"EMAIL_HEADER": "LABBAIK",
 		"EMAIL_USERNAME": "Quizoor@gmail.com",
 		"EMAIL_PASSWORD": "3333Quiz",
 		"EMAIL_CLIENT_ID": "658837219271-3t8q0lhtl85knbjjqf9cf2j5hj731gsq.apps.googleusercontent.com",
@@ -20,5 +20,6 @@
 	"TOKEN_EXPIRE_IN_SHORT": "1h",
 
 	"LINK_CONFIRMATION_FRONTEND": "/auth/confirmation",
+	"LINK_CONFIRMATION_FRONTEND_ADMIN": "/auth/confirmation_",
 	"LINK_RESET_PASSWORD_FRONTEND": "/auth/resetPassword"
 }

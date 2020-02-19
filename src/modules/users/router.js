@@ -20,10 +20,16 @@ router.use(authMiddleware)
 
 
 router.get('/',
+    validator.checkSchema(validationSchema.getAllSchema),
+    validationHandlerMiddleware,
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
-        res.locals.data = await getAll()
+        const data = {
+            ...req.query
+        }
+
+        res.locals.data = await getAll(data)
 
         next()
     }),
@@ -55,7 +61,7 @@ router.post('/updatePassword',
 
         const data = {
             ...req.body,
-            user : res.locals.user
+            user: res.locals.user
         }
 
         res.locals.data = await updatePassword(data)
@@ -72,7 +78,7 @@ router.post('/updateProfile',
 
         const data = {
             ...req.body,
-            user : res.locals.user
+            user: res.locals.user
         }
 
         res.locals.data = await updateProfile(data)

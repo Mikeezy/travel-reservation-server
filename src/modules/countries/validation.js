@@ -6,6 +6,39 @@ const blockCountrySchema = {
     }
 }
 
+const getAllSchema = {
+    offset: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 0
+            }
+        },
+        errorMessage: `Décalage invalide`
+    },
+    limit: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 1
+            }
+        },
+        errorMessage: `Limite invalide`
+    }
+}
+
 const saveCountrySchema = {
     name: {
         in: 'body',
@@ -76,5 +109,6 @@ const saveTownSchema = {
 module.exports = {
     blockCountrySchema,
     saveCountrySchema,
-    saveTownSchema
+    saveTownSchema,
+    getAllSchema
 }

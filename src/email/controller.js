@@ -1,9 +1,10 @@
-const nodemailer  = require('nodemailer')
-const handlebars  = require('handlebars')
-const googleapis  = require('googleapis')
-const fs  = require('fs')
+const nodemailer = require('nodemailer')
+const handlebars = require('handlebars')
+const googleapis = require('googleapis')
+const fs = require('fs')
 const config = require('config')
 const path = require('path')
+const Promise = require('bluebird')
 
 const OAuth2 = googleapis.google.auth.OAuth2;
 
@@ -15,7 +16,7 @@ const oauth2Client = new OAuth2(
 
 
 oauth2Client.setCredentials({
-    refresh_token:config.get('email.EMAIL_REFRESH_TOKEN')
+    refresh_token: config.get('email.EMAIL_REFRESH_TOKEN')
 });
 
 
@@ -26,75 +27,66 @@ const transport = nodemailer.createTransport({
     service: "gmail",
     auth: {
         type: "OAuth2",
-        user:config.get('email.EMAIL_USERNAME'), 
-        clientId:config.get('email.EMAIL_CLIENT_ID'),
-        clientSecret:config.get('email.EMAIL_CLIENT_SECRET'),
-        refreshToken:config.get('email.EMAIL_REFRESH_TOKEN'),
+        user: config.get('email.EMAIL_USERNAME'),
+        clientId: config.get('email.EMAIL_CLIENT_ID'),
+        clientSecret: config.get('email.EMAIL_CLIENT_SECRET'),
+        refreshToken: config.get('email.EMAIL_REFRESH_TOKEN'),
         accessToken: accessToken
     }
 });
 
 const sender = `"${config.get('email.EMAIL_HEADER')}" <${config.get('email.EMAIL_USERNAME')}>`;
 
-const confirmationfilePath = __dirname + '/views/confirmationEmail.html';
-const afterRegisterfilePath = __dirname + '/views/afterRegister.html';
-const resetPasswordfilePath = __dirname + '/views/resetPassword.html';
+const confirmationfilePath = path.join(__dirname, 'views', 'confirmationEmail.html')
+const afterRegisterfilePath = path.join(__dirname, 'views', 'afterRegister.html')
+const resetPasswordfilePath = path.join(__dirname, 'views', 'resetPassword.html')
 
 
 
 //data : to,info
 const sendConfirmationMail = async (data) => {
 
-    fs.readFile(confirmationfilePath, 'utf-8', async function (error, content) {
+    const fsReadFileAsync = Promise.promisify(fs.readFile)
 
-        if (error){
-            
-            throw error
+    const content = await fsReadFileAsync(confirmationfilePath, 'utf-8')
 
-        } 
-        
-        const template = handlebars.compile(content)
-        const page = template(data.info)
-        
-        const mailOptions = {
-            from: sender,
-            to: data.to,
-            subject: 'Please confirm your email address !',
-            html: page
-        }
-        
-        const info = await transport.sendMail(mailOptions)
+    const template = handlebars.compile(content)
+    const page = template(data.info)
 
-        return info
-    })
+    const mailOptions = {
+        from: sender,
+        to: data.to,
+        subject: 'Veuillez confirmer votre adresse mail',
+        html: page
+    }
+
+    const info = await transport.sendMail(mailOptions)
+
+    return info
+
 
 }
 
 //data : to,info
 const sendAfterRegisterMail = async (data) => {
 
-    fs.readFile(afterRegisterfilePath, 'utf-8', async function (error, content) {
+    const fsReadFileAsync = Promise.promisify(fs.readFile)
 
-        if (error){
-            
-            throw error
+    const content = await fsReadFileAsync(afterRegisterfilePath, 'utf-8')
 
-        } 
-        
-        const template = handlebars.compile(content)
-        const page = template(data.info)
-        
-        const mailOptions = {
-            from: sender,
-            to: data.to,
-            subject: 'Account created successfully !',
-            html: page
-        }
-        
-        const info = await transport.sendMail(mailOptions)
+    const template = handlebars.compile(content)
+    const page = template(data.info)
 
-        return info
-    })
+    const mailOptions = {
+        from: sender,
+        to: data.to,
+        subject: 'Compte crée avec succès !',
+        html: page
+    }
+
+    const info = await transport.sendMail(mailOptions)
+
+    return info
 
 }
 
@@ -102,32 +94,31 @@ const sendAfterRegisterMail = async (data) => {
 //data : to,info
 const sendResetPasswordMail = async (data) => {
 
-    fs.readFile(resetPasswordfilePath, 'utf-8', async function (error, content) {
+    const fsReadFileAsync = Promise.promisify(fs.readFile)
 
-        if (error){
-            
-            throw error
+    const content = await fsReadFileAsync(resetPasswordfilePath, 'utf-8')
 
-        } 
-        
-        const template = handlebars.compile(content)
-        const page = template(data.info)
-        
-        const mailOptions = {
-            from: sender,
-            to: data.to,
-            subject: 'Reset password request',
-            html: page
-        }
-        
-        const info = await transport.sendMail(mailOptions)
+    const template = handlebars.compile(content)
+    const page = template(data.info)
 
-        return info
-    })
+    const mailOptions = {
+        from: sender,
+        to: data.to,
+        subject: 'Demande de réinitialisation de mot de passe',
+        html: page
+    }
+
+    const info = await transport.sendMail(mailOptions)
+
+    return info
 
 }
 
-const sendMail = async ({to,subject,content}) => {
+const sendMail = async ({
+    to,
+    subject,
+    content
+}) => {
 
     let mailOptions = {
         from: sender,

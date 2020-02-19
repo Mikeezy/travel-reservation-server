@@ -36,6 +36,8 @@ router.get('/',
 )
 
 router.get('/getAll',
+    validator.checkSchema(validationSchema.getAllSchema),
+    validationHandlerMiddleware,
     cacheMiddleware.get,
     asyncMiddleware(async (req, res, next) => {
 
