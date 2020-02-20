@@ -37,44 +37,123 @@ exports.getAllCountry = async function getAllCountry({
 
 }
 
+exports.getAllCountriesForSelect = async function getAllCountriesForSelect() {
+    
+    const data = await Country.aggregate([
+        {$match : {
+            status : true
+        }},
+        {$sort : {
+            "name" : 1
+        }},
+        {$project : {
+            _id : 0,
+            value : "$_id",
+            label : "$name"
+        }}
+    ])
+    .exec()
+
+    return data
+
+    
+}
+
 exports.getAllTowns = async function getAllTowns() {
     
-    let dataArray = []
-
-    const data = await Country.find({
-            status : true
-        })
-        .lean()
-        .cursor()
-        .eachAsync(async function (doc) {
-
-            if (doc) {
-                
-                doc.towns.forEach((town) => {
-
-                    if(town.status) {
-
-                        dataArray.push({
-                            id : town._id,
-                            name : `${town.name} (${doc.name})`
-                        })
-
-                    }
-
-                })
-
-                return null
-
+    const data = await Country.aggregate([
+        {$match : {
+            status : true,
+            "towns.status" : true
+        }},
+        {$unwind : '$towns'},
+        {$sort : {
+            "towns.name" : 1
+        }},
+        {$project : {
+            _id : 0,
+            id : "$towns._id",
+            name : {
+                $concat : ["$towns.name"," ","(","$name",")"]
             }
+        }}
+    ])
+    .exec()
 
-            return null
+    return data
 
-        })
-        .then(() => new Promise(resolve => resolve(dataArray)))
+    
+}
 
-        return data.sort((a,b) => {
-            return a.name.localeCompare(b.name)
-        })
+exports.getAllTownsForSelect = async function getAllTownsForSelect() {
+    
+    const data = await Country.aggregate([
+        {$match : {
+            status : true,
+            "towns.status" : true
+        }},
+        {$unwind : '$towns'},
+        {$sort : {
+            "towns.name" : 1
+        }},
+        {$project : {
+            _id : 0,
+            value : "$towns._id",
+            label : {
+                $concat : ["$towns.name"," ","(","$name",")"]
+            }
+        }}
+    ])
+    .exec()
+
+    return data
+
+    
+}
+
+exports.getAllTownsForFrontend = async function getAllTownsForFrontend({
+    offset = 0,
+    limit = 5
+}) {
+    
+    const dataPromise = Country.aggregate([
+        {$unwind : '$towns'},
+        {$sort : {
+            "towns.name" : 1
+        }},
+        {$project : {
+            _id : 0,
+            id : "$towns._id",
+            name : "$towns.name",
+            description : "$towns.description",
+            status : "$towns.status",
+            idCountry : {
+                value : "$_id",
+                label : "$name"
+            }
+        }},
+        {$skip : +offset},
+        {$limit : +limit}
+    ])
+    .exec()
+
+    const totalPromise = Country.aggregate([
+        {$unwind : '$towns'},
+        {$group : {
+            _id : null,
+            total : {
+                $sum : 1
+            }
+        }}
+    ])
+    .exec()
+
+    const [data,total] = await Promise.all([dataPromise,totalPromise])
+
+    return {
+        total : total.length > 0 ? +total[0].total : 0,
+        data
+    }
 
     
 }

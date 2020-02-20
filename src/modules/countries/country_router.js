@@ -9,7 +9,8 @@ const validationSchema = require('./validation')
 const {
     getAllCountry,
     blockCountry,
-    saveCountry
+    saveCountry,
+    getAllCountriesForSelect
 } = require('./controller')
 
 const router = express.Router()
@@ -46,6 +47,18 @@ router.get('/getAll',
         }
 
         res.locals.data = await getAllCountry(data)
+
+        next()
+    }),
+    cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.get('/getAllForSelect',
+    cacheMiddleware.get,
+    asyncMiddleware(async (req, res, next) => {
+
+        res.locals.data = await getAllCountriesForSelect()
 
         next()
     }),
