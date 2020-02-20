@@ -9,6 +9,8 @@ const validationSchema = require('./validation')
 const {
     getAllTownByCountry,
     blockTown,
+    getAllTownsForFrontend,
+    getAllTownsForSelect,
     saveTown,
     getAllTowns
 } = require('./controller')
@@ -40,6 +42,38 @@ router.get('/getAll',
     asyncMiddleware(async (req, res, next) => {
 
         res.locals.data = await getAllTowns()
+
+        next()
+    }),
+    cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.get('/getAllForFrontend',
+    authMiddleware,
+    validator.checkSchema(validationSchema.getAllSchema),
+    validationHandlerMiddleware,
+    cacheMiddleware.get,
+    asyncMiddleware(async (req, res, next) => {
+
+        const data = {
+            ...req.query
+        }
+
+        res.locals.data = await getAllTownsForFrontend(data)
+
+        next()
+    }),
+    cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.get('/getAllForSelect',
+    authMiddleware,
+    cacheMiddleware.get,
+    asyncMiddleware(async (req, res, next) => {
+
+        res.locals.data = await getAllTownsForSelect()
 
         next()
     }),
