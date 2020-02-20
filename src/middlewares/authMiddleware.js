@@ -8,7 +8,6 @@ module.exports = function (req, res, next) {
 
     let token = req.body.token || req.query.token || req.headers['authorization'];
 
-    console.log(req.body)
     if (!token) {
 
         let error = new customError(`Token non fourni, veuillez vous authentifier svp !`,'TOKEN_NOT_PROVIDED')
