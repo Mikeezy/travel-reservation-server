@@ -8,6 +8,7 @@ const validator = require('express-validator')
 const validationSchema = require('./validation')
 const {
     getAll,
+    getAllForSelect,
     block,
     save
 } = require('./controller')
@@ -47,6 +48,18 @@ router.get('/getAll',
 
         res.locals.data = await getAll(data)
 
+        next()
+    }),
+    cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.get('/getAllForSelect',
+    cacheMiddleware.get,
+    asyncMiddleware(async (req, res, next) => {
+
+        res.locals.data = await getAllForSelect()
+        
         next()
     }),
     cacheMiddleware.set,

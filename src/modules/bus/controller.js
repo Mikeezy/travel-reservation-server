@@ -31,6 +31,29 @@ exports.getAll = async function getAll({
     }
 }
 
+exports.getAllForSelect = async function getAllForSelect() {
+    
+    const data = await Bus.aggregate([
+        {$match : {
+            status : true
+        }},
+        {$sort : {
+            "name" : 1
+        }},
+        {$project : {
+            _id : 0,
+            value : "$_id",
+            label : {
+                $concat : ["$name"," ","(","$immatriculation_number",")"]
+            }
+        }}
+    ])
+    .exec()
+
+    return data
+
+}
+
 exports.block = async function block({id}) {
 
     let dataGet = await Bus.findOne({

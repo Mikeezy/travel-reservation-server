@@ -1,6 +1,8 @@
 const Travel = require('./model')
 const Country = require('../countries/model')
+const {getRemainingPlace} = require('../booking/controller')
 const Promise = require('bluebird')
+const moment = require('moment')
 
 
 
@@ -11,10 +13,9 @@ exports.getAll = async function getAll({
 
     const dataArray = []
 
-    const data = await Travel.find()
+    const dataPromise = Travel.find()
         .skip(+offset)
         .limit(+limit)
-        .select('-created_at')
         .sort('-date_departing')
         .populate({
             path: 'driving.bus',
@@ -26,23 +27,60 @@ exports.getAll = async function getAll({
 
             if (doc) {
 
-                const fromPromise = Country.findOne({
-                    'towns._id': doc.from
-                }, {
-                    'towns.$': 1
-                }).select('name description').exec()
+                const fromPromise = Country.aggregate([
+                    {$unwind : '$towns'},
+                    {$match : {
+                        'towns._id' : doc.from
+                    }},
+                    {$project : {
+                        _id : 0,
+                        value : "$towns._id",
+                        label : {
+                            $concat : ["$towns.name"," ","(","$name",")"]
+                        }
+                    }}
+                ])
+                .exec()
 
-                const toPromise = Country.findOne({
-                    'towns._id': doc.to
-                }, {
-                    'towns.$': 1
-                }).select('name description').exec()
+                const toPromise = Country.aggregate([
+                    {$unwind : '$towns'},
+                    {$match : {
+                        'towns._id' : doc.to
+                    }},
+                    {$project : {
+                        _id : 0,
+                        value : "$towns._id",
+                        label : {
+                            $concat : ["$towns.name"," ","(","$name",")"]
+                        }
+                    }}
+                ])
+                .exec()
 
-                const [from, to] = await Promise.all([fromPromise, toPromise])
+                const passenger_number_availablePromise = getRemainingPlace({
+                    travelId: doc._id
+                })
 
+                const [from, to, passenger_number_available] = await Promise.all([fromPromise, toPromise,passenger_number_availablePromise])
+                
+                let drivingFormated = []
 
-                doc.from = from.towns[0]
-                doc.to = to.towns[0]
+                for (const item of doc.driving) {
+                    
+                    drivingFormated.push({
+                        value : item.bus._id,
+                        label : `${item.bus.name} (${item.bus.capacity})`
+                    })
+                }
+
+                doc.id = doc._id
+                doc.date_departing = moment(doc.date_departing).format("DD/MM/YYYY HH:mm")
+                doc.date_arriving = moment(doc.date_arriving).format("DD/MM/YYYY HH:mm")
+                doc.from = from.length > 0 ? from[0] : {value : '',label : ''}
+                doc.to = to.length > 0 ? to[0] : {value : '',label : ''}
+                doc.remaining_place = passenger_number_available.remainingPlace
+                doc.passengers_already_get = passenger_number_available.passengerNumberAlreadyGet
+                doc.driving = drivingFormated
 
                 return dataArray.push(doc)
 
@@ -53,8 +91,17 @@ exports.getAll = async function getAll({
         })
         .then(() => new Promise(resolve => resolve(dataArray)))
 
+    const totalPromise = Travel.find()
+        .countDocuments()
+        .exec()
 
-    return data
+    const [data,total] = await Promise.all([dataPromise,totalPromise])
+
+    return {
+            total,
+            data
+        }
+
 }
 
 exports.block = async function block({
@@ -82,6 +129,9 @@ exports.save = async function save({
     driving,
     ...data
 }) {
+    console.log(data)
+    data.date_departing = moment(data.date_departing,"DD/MM/YYYY HH:mm")
+    data.date_arriving = moment(data.date_arriving,"DD/MM/YYYY HH:mm")
 
     if (!id) {
 

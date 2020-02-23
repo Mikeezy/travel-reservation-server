@@ -41,6 +41,27 @@ const getAllSchema = {
             }
         },
         errorMessage: `Limite invalide`
+    },
+    travelId: {
+        in: 'params',
+        isMongoId: true,
+        errorMessage: 'Voyage invalide',
+        bail: true,
+        custom: {
+            options: async (value) => {
+
+                const travel = await Travel.findOne({
+                    _id: value
+                }).select('_id').exec()
+
+                if (!travel) {
+                    throw new Error(`Ce voyage n'existe pas, veuillez réessayer svp !`);
+                }
+
+                return true
+
+            }
+        }
     }
 }
 
@@ -110,9 +131,9 @@ const saveSchema = {
 
                     const obj = JSON.parse(JSON.stringify(value));
 
-                    if (obj && typeof obj === "object" && obj !== null) {
+                    if (obj && typeof obj === "object" && obj !== null && obj.fullname && obj.phone_number) {
                         
-                        return obj;
+                        return true;
                     }
                     
                     throw new Error('Invité invalide')

@@ -74,7 +74,7 @@ router.get('/getAllForSelect',
     asyncMiddleware(async (req, res, next) => {
 
         res.locals.data = await getAllTownsForSelect()
-
+        
         next()
     }),
     cacheMiddleware.set,

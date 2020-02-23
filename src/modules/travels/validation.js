@@ -120,11 +120,10 @@ const saveSchema = {
     },
     date_departing: {
         in: 'body',
-        toDate: true,
         custom : {
             options : (value) => {
-                
-                if(!moment(value).isValid()){
+                console.log(value)
+                if(!moment(value,"DD/MM/YYYY HH:mm").isValid()){
                     throw new Error(`Date de départ invalide`)
                 }
     
@@ -134,13 +133,12 @@ const saveSchema = {
     },
     date_arriving: {
         in: 'body',
-        toDate: true,
         custom : {
             options : (value, {req}) => {
                 
-                if(!moment(value).isValid()){
+                if(!moment(value,"DD/MM/YYYY HH:mm").isValid()){
                     throw new Error(`Date d'arrivée invalide`)
-                }else if(moment(value).isBefore(moment(req.body.date_departing))){
+                }else if(moment(value,"DD/MM/YYYY HH:mm").isBefore(moment(req.body.date_departing,"DD/MM/YYYY HH:mm"))){
                     throw new Error(`La date d'arrivée doit être supérieure à la date de départ`)
                 }
     
@@ -159,9 +157,9 @@ const saveSchema = {
         custom : {
             options : (value, {req}) => {
                 
-                if(!moment(value).isValid()){
+                if(!moment(value,"DD/MM/YYYY HH:mm").isValid()){
                     throw new Error(`Date de retour invalide`)
-                }else if(moment(value).isBefore(moment(req.body.date_departing)) || moment(value).isBefore(moment(req.body.date_arriving))){
+                }else if(moment(value,"DD/MM/YYYY HH:mm").isBefore(moment(req.body.date_departing,"DD/MM/YYYY HH:mm")) || moment(value,"DD/MM/YYYY HH:mm").isBefore(moment(req.body.date_arriving,"DD/MM/YYYY HH:mm"))){
                     throw new Error(`La date de retour doit être supérieure à la date de départ ou à la date d'arrviée`)
                 }
     

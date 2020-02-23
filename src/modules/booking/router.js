@@ -17,7 +17,7 @@ const {
 
 const router = express.Router()
 
-router.get('/',
+router.get('/:travelId',
     authMiddleware,
     validator.checkSchema(validationSchema.getAllSchema),
     validationHandlerMiddleware,
@@ -25,6 +25,7 @@ router.get('/',
     asyncMiddleware(async (req, res, next) => {
 
         const data = {
+            ...req.params,
             ...req.query
         }
 
@@ -80,6 +81,7 @@ router.get('/block/:id',
 
         next()
     }),
+    cacheMiddleware.customClear('/v1/travel'),
     cacheMiddleware.clear,
     responseHandlerMiddleware
 )

@@ -1,5 +1,7 @@
 const client = require('../utils/redis')
-const {successMessage} = require('../utils/response')
+const {
+    successMessage
+} = require('../utils/response')
 
 const ttl = 15 * 60
 
@@ -19,7 +21,7 @@ function getKeyFromRequestBody(req) {
     }
 
 
-    for(let value of Object.values(parameters)){
+    for (let value of Object.values(parameters)) {
 
         key = key + `/${value}`
 
@@ -33,9 +35,9 @@ async function get(req, res, next) {
     const key = getKeyFromRequest(req)
 
     const data = await client.getAsync(key)
-    
-    if(data) {
-        
+
+    if (data) {
+
         const dataToReturn = successMessage(JSON.parse(data))
         return res.status(200).json(dataToReturn)
 
@@ -50,8 +52,8 @@ async function getByBody(req, res, next) {
     const key = getKeyFromRequestBody(req)
 
     const data = await client.getAsync(key)
-    
-    if(data) {
+
+    if (data) {
 
         const dataToReturn = successMessage(JSON.parse(data))
         return res.status(200).json(dataToReturn)
@@ -67,8 +69,8 @@ async function set(req, res, next) {
     const key = getKeyFromRequest(req)
 
     const value = res.locals.data
-    
-    await client.setAsync(key,JSON.stringify(value),'EX',ttl)
+
+    await client.setAsync(key, JSON.stringify(value), 'EX', ttl)
 
     return next()
 
@@ -80,19 +82,19 @@ async function setByBody(req, res, next) {
 
     const value = res.locals.data
 
-    await client.setAsync(key,JSON.stringify(value),'EX',ttl)
+    await client.setAsync(key, JSON.stringify(value), 'EX', ttl)
 
     return next()
 
 }
 
-async function clear (req,res,next) {
+async function clear(req, res, next) {
 
     const keysToDelete = req.baseUrl
     const dataToDelete = await client.keysAsync(`${keysToDelete}*`)
-    
 
-    if(dataToDelete.length > 0) {
+
+    if (dataToDelete.length > 0) {
 
         await client.delAsync(dataToDelete)
     }
@@ -101,10 +103,27 @@ async function clear (req,res,next) {
 
 }
 
+function customClear(keysToDelete) {
+
+    return async function (req, res, next) {
+
+        const dataToDelete = await client.keysAsync(`${keysToDelete}*`)
+
+
+        if (dataToDelete.length > 0) {
+
+            await client.delAsync(dataToDelete)
+        }
+
+        return next()
+    }
+}
+
 module.exports = {
     get,
     getByBody,
     set,
     setByBody,
-    clear
+    clear,
+    customClear
 }

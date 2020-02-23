@@ -17,19 +17,16 @@ const _async = require('async')
 
 exports.getAll = async function getAll({
     offset = 0,
-    limit = 5
+    limit = 5,
+    travelId
 }) {
 
-    const dataArray = []
-
-    const data = await Booking.find()
+    const dataPromise = Booking.find({
+            travel : travelId
+        })
         .skip(+offset)
         .limit(+limit)
         .sort('-date_booking')
-        .populate({
-            path: 'travel',
-            select: '-status -created_at -driving'
-        })
         .populate({
             path: 'seat_number.bus',
             select: 'name capacity immatriculation_number'
@@ -39,39 +36,21 @@ exports.getAll = async function getAll({
             select: 'lastname firstname phone_number'
         })
         .lean()
-        .cursor()
-        .eachAsync(async function (doc) {
+        .exec()
 
-            if (doc) {
-
-                const fromPromise = Country.findOne({
-                    'towns._id': doc.travel.from
-                }, {
-                    'towns.$': 1
-                }).select('name description').exec()
-
-                const toPromise = Country.findOne({
-                    'towns._id': doc.travel.to
-                }, {
-                    'towns.$': 1
-                }).select('name description').exec()
-
-                const [from, to] = await Promise.all([fromPromise, toPromise])
-
-
-                doc.travel.from = from.towns[0]
-                doc.travel.to = to.towns[0]
-
-                return dataArray.push(doc)
-
-            }
-
-            return null
-
+    const totalPromise = Booking.find({
+        travel : travelId
         })
-        .then(() => new Promise(resolve => resolve(dataArray)))
+        .countDocuments()
+        .exec()
 
-    return data
+    const [data,total] = await Promise.all([dataPromise,totalPromise])
+
+    return {
+            total,
+            data
+        }
+
 }
 
 exports.getByReference = async function getByReference({
@@ -234,7 +213,8 @@ async function getRemainingPlace({
 
     const passenger_number_alreadyGetPromise = Booking.aggregate([{
             $match: {
-                travel: mongoose.Types.ObjectId(travelId)
+                travel: mongoose.Types.ObjectId(travelId),
+                status : true
             }
         }, {
             $group: {
@@ -247,8 +227,7 @@ async function getRemainingPlace({
         .exec()
 
     const travelGetPromise = Travel.findOne({
-            _id: travelId,
-            status: true
+            _id: travelId
         })
         .populate('driving.bus')
         .exec()
