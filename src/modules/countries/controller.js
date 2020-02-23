@@ -62,11 +62,11 @@ exports.getAllCountriesForSelect = async function getAllCountriesForSelect() {
 exports.getAllTowns = async function getAllTowns() {
     
     const data = await Country.aggregate([
+        {$unwind : '$towns'},
         {$match : {
             status : true,
             "towns.status" : true
         }},
-        {$unwind : '$towns'},
         {$sort : {
             "towns.name" : 1
         }},
@@ -88,11 +88,11 @@ exports.getAllTowns = async function getAllTowns() {
 exports.getAllTownsForSelect = async function getAllTownsForSelect() {
     
     const data = await Country.aggregate([
+        {$unwind : '$towns'},
         {$match : {
             status : true,
             "towns.status" : true
         }},
-        {$unwind : '$towns'},
         {$sort : {
             "towns.name" : 1
         }},

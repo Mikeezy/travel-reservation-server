@@ -26,7 +26,6 @@ router.get('/',
         }
 
         res.locals.data = await getAll(data)
-
         next()
     }),
     cacheMiddleware.set,
