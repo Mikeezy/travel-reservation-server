@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 const moment = require('moment')
 
 
-
 exports.getAll = async function getAll({
     offset = 0,
     limit = 5
