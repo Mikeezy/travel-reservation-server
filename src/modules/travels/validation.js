@@ -174,11 +174,95 @@ const saveSchema = {
     }
 }
 
+const searchSchema = {
+    offset: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 0
+            }
+        },
+        errorMessage: `Décalage invalide`
+    },
+    limit: {
+        in: 'query',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        toInt : true,
+        isInt: {
+            options: {
+                min: 1
+            }
+        },
+        errorMessage: `Limite invalide`
+    },
+    from: {
+        in: 'body',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        isMongoId: true,
+        errorMessage: 'Lieu de départ invalide',
+    },
+    to: {
+        in: 'body',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        isMongoId: true,
+        errorMessage: `Lieu d'arrivé invalide`,
+        bail: true,
+        custom: {
+            options: async (value,{req}) => {
+
+                if(req.body.from && value === req.body.from){
+                    throw new Error(`Le lieu d'arrivé ne peut pas être égal au lieu de départ, veuillez réessayer svp !`);
+                }
+
+                return true
+
+            }
+        }
+    },
+    date_departing: {
+        in: 'body',
+        optional: {
+            options: {
+                checkFalsy: true,
+            },
+        },
+        custom : {
+            options : (value) => {
+                
+                if(!moment(value,"DD/MM/YYYY").isValid()){
+                    throw new Error(`Date de départ invalide`)
+                }
+    
+                return true
+            }
+        }
+    }
+}
+
 
 
 
 module.exports = {
     blockSchema,
     saveSchema,
-    getAllSchema
+    getAllSchema,
+    searchSchema
 }

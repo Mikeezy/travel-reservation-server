@@ -8,6 +8,7 @@ const validator = require('express-validator')
 const validationSchema = require('./validation')
 const {
     getAll,
+    search,
     block,
     save
 } = require('./controller')
@@ -29,6 +30,25 @@ router.get('/',
         next()
     }),
     cacheMiddleware.set,
+    responseHandlerMiddleware
+)
+
+router.post('/search',
+    authMiddleware,
+    validator.checkSchema(validationSchema.searchSchema),
+    validationHandlerMiddleware,
+    asyncMiddleware(async (req, res, next) => {
+
+
+        const data = {
+            ...req.body,
+            ...req.query
+        }
+
+        res.locals.data = await search(data)
+
+        next()
+    }),
     responseHandlerMiddleware
 )
 
