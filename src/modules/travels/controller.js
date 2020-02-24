@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 const moment = require('moment')
 
 
-
 exports.getAll = async function getAll({
     offset = 0,
     limit = 5
@@ -92,6 +91,129 @@ exports.getAll = async function getAll({
         .then(() => new Promise(resolve => resolve(dataArray)))
 
     const totalPromise = Travel.find()
+        .countDocuments()
+        .exec()
+
+    const [data,total] = await Promise.all([dataPromise,totalPromise])
+
+    return {
+            total,
+            data
+        }
+
+}
+
+exports.search = async function search({
+    offset = 0,
+    limit = 5,
+    to = '',
+    from = '',
+    date_departing = ''
+}) {
+
+    const dataArray = []
+    
+    const request = {
+        
+    }
+    
+    if(date_departing) {
+
+        const dateDeparting = moment(date_departing,"DD/MM/YYYY").startOf('day')
+        request.date_departing = {
+            $gte : dateDeparting.toDate(),
+            $lte : moment(dateDeparting).endOf('day').toDate()
+        }
+        
+    }
+
+    if(from) {
+        request.from = from
+    }
+
+    if(to){
+        request.to = to
+    }
+
+    const dataPromise = Travel.find(request)
+        .skip(+offset)
+        .limit(+limit)
+        .sort('-date_departing')
+        .populate({
+            path: 'driving.bus',
+            select: 'name capacity'
+        })
+        .lean()
+        .cursor()
+        .eachAsync(async function (doc) {
+
+            if (doc) {
+
+                const fromPromise = Country.aggregate([
+                    {$unwind : '$towns'},
+                    {$match : {
+                        'towns._id' : doc.from
+                    }},
+                    {$project : {
+                        _id : 0,
+                        value : "$towns._id",
+                        label : {
+                            $concat : ["$towns.name"," ","(","$name",")"]
+                        }
+                    }}
+                ])
+                .exec()
+
+                const toPromise = Country.aggregate([
+                    {$unwind : '$towns'},
+                    {$match : {
+                        'towns._id' : doc.to
+                    }},
+                    {$project : {
+                        _id : 0,
+                        value : "$towns._id",
+                        label : {
+                            $concat : ["$towns.name"," ","(","$name",")"]
+                        }
+                    }}
+                ])
+                .exec()
+
+                const passenger_number_availablePromise = getRemainingPlace({
+                    travelId: doc._id
+                })
+
+                const [from, to, passenger_number_available] = await Promise.all([fromPromise, toPromise,passenger_number_availablePromise])
+                
+                let drivingFormated = []
+
+                for (const item of doc.driving) {
+                    
+                    drivingFormated.push({
+                        value : item.bus._id,
+                        label : `${item.bus.name} (${item.bus.capacity})`
+                    })
+                }
+
+                doc.id = doc._id
+                doc.date_departing = moment(doc.date_departing).format("DD/MM/YYYY HH:mm")
+                doc.date_arriving = moment(doc.date_arriving).format("DD/MM/YYYY HH:mm")
+                doc.from = from.length > 0 ? from[0] : {value : '',label : ''}
+                doc.to = to.length > 0 ? to[0] : {value : '',label : ''}
+                doc.remaining_place = passenger_number_available.remainingPlace
+                doc.passengers_already_get = passenger_number_available.passengerNumberAlreadyGet
+                doc.driving = drivingFormated
+
+                return dataArray.push(doc)
+
+            }
+
+            return null
+
+        })
+        .then(() => new Promise(resolve => resolve(dataArray)))
+
+    const totalPromise = Travel.find(request)
         .countDocuments()
         .exec()
 
