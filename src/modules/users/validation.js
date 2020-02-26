@@ -361,9 +361,9 @@ const updatePasswordSchema = {
     old_password : {
         in: 'body',
         isLength: {
-            errorMessage: `L'ancien mot de passe doit contenir au moins 7 caractères svp !`,
+            errorMessage: `L'ancien mot de passe doit contenir au moins 5 caractères svp !`,
             options: {
-                min: 7
+                min: 5
             }
         },
     }
@@ -394,14 +394,22 @@ const updateProfileSchema = {
     },
     phone_number : {
         in: 'body',
-        optional : {
-            options: {
-                checkFalsy: true,
-            },
-        },
-        matches : {
-            options : ['/^(2|7|9){1}[0-9]{7}$/i'],
-            errorMessage : 'Numéro de téléphone invalide'
+        custom : {
+            options : function (value){
+                try {
+                
+                    const phoneNumber = parsePhoneNumberFromString(value)
+
+                    if(phoneNumber.isPossible()){
+                        return true
+                    }else{
+                        throw new Error(`Numéro de téléphone invalide`)
+                    }
+
+                } catch (e) {
+                    throw new Error(`Numéro de téléphone invalide`)
+                }
+            }
         }
     }
 }

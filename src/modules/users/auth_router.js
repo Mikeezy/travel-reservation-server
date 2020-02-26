@@ -76,7 +76,7 @@ router.post('/signupAdminPartTwo/:token',
     validator.checkSchema(validationSchema.signupAdminPartTwoSchema),
     validationHandlerMiddleware,
     authLimiterMiddleware({
-        max: 2,
+        max: 5,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
     asyncMiddleware(async (req, res, next) => {
@@ -101,7 +101,7 @@ router.get('/signupPartTwo/:token',
     validator.checkSchema(validationSchema.signupPartTwoSchema),
     validationHandlerMiddleware,
     authLimiterMiddleware({
-        max: 2,
+        max: 5,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
     asyncMiddleware(async (req, res, next) => {
@@ -122,7 +122,7 @@ router.post('/resetPasswordPartOne',
     validator.checkSchema(validationSchema.resetPasswordPartOneSchema),
     validationHandlerMiddleware,
     authLimiterMiddleware({
-        max: 2,
+        max: 5,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
     asyncMiddleware(async (req, res, next) => {
@@ -142,7 +142,7 @@ router.post('/resetPasswordPartTwo/:token',
     validator.checkSchema(validationSchema.resetPasswordPartTwoSchema),
     validationHandlerMiddleware,
     authLimiterMiddleware({
-        max: 2,
+        max: 5,
         message: "Vous avez trop user de cette action, veuillez réessayer après une heure svp !"
     }),
     asyncMiddleware(async (req, res, next) => {
