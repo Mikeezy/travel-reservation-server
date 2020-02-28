@@ -66,6 +66,8 @@ router.get('/block/:id',
 
         next()
     }),
+    cacheMiddleware.customClear('/v1/booking'),
+    cacheMiddleware.customClear('/v1/information'),
     cacheMiddleware.clear,
     responseHandlerMiddleware
 )
@@ -86,6 +88,8 @@ router.post('/save',
 
         next()
     }),
+    cacheMiddleware.customClear('/v1/booking'),
+    cacheMiddleware.customClear('/v1/information'),
     cacheMiddleware.clear,
     responseHandlerMiddleware
 )
