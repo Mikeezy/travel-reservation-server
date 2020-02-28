@@ -12,7 +12,6 @@ const {
     generateReference
 } = require('../../utils/random')
 const moment = require('moment')
-const _async = require('async')
 
 
 exports.getAll = async function getAll({
@@ -22,7 +21,7 @@ exports.getAll = async function getAll({
 }) {
 
     const dataPromise = Booking.find({
-            travel : travelId
+            travel: travelId
         })
         .skip(+offset)
         .limit(+limit)
@@ -39,17 +38,17 @@ exports.getAll = async function getAll({
         .exec()
 
     const totalPromise = Booking.find({
-        travel : travelId
+            travel: travelId
         })
         .countDocuments()
         .exec()
 
-    const [data,total] = await Promise.all([dataPromise,totalPromise])
+    const [data, total] = await Promise.all([dataPromise, totalPromise])
 
     return {
-            total,
-            data
-        }
+        total,
+        data
+    }
 
 }
 
@@ -129,22 +128,22 @@ exports.getByUser = async function getByUser({
     let dataArray = []
 
     const data = await User.findOne({
-            _id : id
+            _id: id
         })
         .select('bookings')
         .populate({
             path: 'bookings',
             select: 'date_booking reference travel',
-            populate : {
-                path : 'travel',
-                select : 'name from to date_departing date_arriving price'
+            populate: {
+                path: 'travel',
+                select: 'name from to date_departing date_arriving price'
             }
         })
         .lean()
         .exec()
 
 
-    if(data.bookings && data.bookings.length > 0){
+    if (data.bookings && data.bookings.length > 0) {
 
         for await (book of data.bookings) {
 
@@ -160,18 +159,18 @@ exports.getByUser = async function getByUser({
                 'towns.$': 1
             }).select('name').exec()
 
-            const [from,to] = await Promise.all([fromPromise, toPromise])
+            const [from, to] = await Promise.all([fromPromise, toPromise])
 
             dataArray.push({
-                date_booking : book.date_booking,
-                reference : book.reference,
-                travel : {
-                    name : book.travel.name,
-                    from : from.towns[0].name ,
-                    to : to.towns[0].name,
-                    date_departing : book.travel.date_departing,
-                    date_arriving : book.travel.date_arriving,
-                    price : book.travel.price
+                date_booking: book.date_booking,
+                reference: book.reference,
+                travel: {
+                    name: book.travel.name,
+                    from: from.towns[0].name,
+                    to: to.towns[0].name,
+                    date_departing: book.travel.date_departing,
+                    date_arriving: book.travel.date_arriving,
+                    price: book.travel.price
                 }
             })
 
@@ -179,7 +178,7 @@ exports.getByUser = async function getByUser({
 
         return dataArray
 
-    }else{
+    } else {
 
         return []
 
@@ -214,7 +213,7 @@ async function getRemainingPlace({
     const passenger_number_alreadyGetPromise = Booking.aggregate([{
             $match: {
                 travel: mongoose.Types.ObjectId(travelId),
-                status : true
+                status: true
             }
         }, {
             $group: {
@@ -234,7 +233,7 @@ async function getRemainingPlace({
 
     const [travelGet, passenger_number_alreadyGet] = await Promise.all([travelGetPromise, passenger_number_alreadyGetPromise])
 
-    
+
     const busCapacity = travelGet.driving.reduce((acc, curr) => {
 
         return acc + curr.bus.capacity
@@ -254,6 +253,99 @@ async function getRemainingPlace({
 
 exports.getRemainingPlace = getRemainingPlace
 
+exports.getAllForFrontendDashboard = async function getAllForFrontendDashboard() {
+
+    const getDailyReservationPlacePromise = Booking.aggregate([{
+                $match: {
+                    date_booking: {
+                        $gte: moment().startOf('day').toDate(),
+                        $lte: moment().endOf('day').toDate()
+                    },
+                    status : true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: '$passenger_number'
+                    }
+                }
+            }
+        ])
+        .exec()
+
+    const getWeeklyReservationPlacePromise = Booking.aggregate([{
+                $match: {
+                    date_booking: {
+                        $gte: moment().startOf('week').toDate(),
+                        $lte: moment().endOf('week').toDate()
+                    },
+                    status : true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: '$passenger_number'
+                    }
+                }
+            }
+        ])
+        .exec()
+
+    const getMonthlyReservationPlacePromise = Booking.aggregate([{
+                $match: {
+                    date_booking: {
+                        $gte: moment().startOf('month').toDate(),
+                        $lte: moment().endOf('month').toDate()
+                    },
+                    status : true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: '$passenger_number'
+                    }
+                }
+            }
+        ])
+        .exec()
+
+    const getMonthlyTravelPromise = Travel.aggregate([{
+                $match: {
+                    date_departing: {
+                        $gte: moment().startOf('month').toDate(),
+                        $lte: moment().endOf('month').toDate()
+                    },
+                    status : true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: {
+                        $sum: 1
+                    }
+                }
+            }
+        ])
+        .exec()
+
+    const [gDRP, gWRP, gMRP, gMT] = await Promise.all([getDailyReservationPlacePromise, getWeeklyReservationPlacePromise, getMonthlyReservationPlacePromise, getMonthlyTravelPromise])
+
+    const dailyRsvt = gDRP.length > 0 ? +gDRP[0].total : 0
+    const weeklyRsvt = gWRP.length > 0 ? +gWRP[0].total : 0
+    const monthlyRsvt = gMRP.length > 0 ? +gMRP[0].total : 0
+    const monthlyTrvl = gMT.length > 0 ? +gMT[0].total : 0
+
+    return [dailyRsvt, weeklyRsvt, monthlyRsvt, monthlyTrvl]
+
+}
+
 exports.search = async function search({
     from,
     to,
@@ -266,9 +358,9 @@ exports.search = async function search({
     const dataGet = await Travel.find({
             from,
             to,
-            date_departing : {
-                $gte : dateDeparting.toDate(),
-                $lte : moment(dateDeparting).endOf('day').toDate()
+            date_departing: {
+                $gte: dateDeparting.toDate(),
+                $lte: moment(dateDeparting).endOf('day').toDate()
             },
             status: true
         })
@@ -327,21 +419,21 @@ exports.search = async function search({
 
 }
 
-async function getAvailableBus (passengerNumberAlreadyGet,allBus){
+async function getAvailableBus(passengerNumberAlreadyGet, allBus) {
 
     let sumCapacity = 0
     let sumCapacityNotAvailableBus = 0
     let availableBus = []
 
     allBus.forEach((value) => {
-        
+
         sumCapacity += +value.bus.capacity
 
-        if(sumCapacity > passengerNumberAlreadyGet){
+        if (sumCapacity > passengerNumberAlreadyGet) {
 
             availableBus.push(value)
 
-        }else{
+        } else {
 
             sumCapacityNotAvailableBus += +value.bus.capacity
 
@@ -349,17 +441,17 @@ async function getAvailableBus (passengerNumberAlreadyGet,allBus){
 
     })
 
-    return [sumCapacityNotAvailableBus,availableBus]
+    return [sumCapacityNotAvailableBus, availableBus]
 
 }
 
-async function getRightPassengerNumber(index,sumCapacityNotAvailableBus,check) {
+async function getRightPassengerNumber(index, sumCapacityNotAvailableBus, check) {
 
-    if(check){
+    if (check) {
 
         return index - sumCapacityNotAvailableBus
 
-    }else{
+    } else {
 
         return index
 
@@ -367,17 +459,17 @@ async function getRightPassengerNumber(index,sumCapacityNotAvailableBus,check) {
 
 }
 
-async function getRemainingPlaceByBus(totalRemaining,indexCurrentCapacity,allCapacity) {
+async function getRemainingPlaceByBus(totalRemaining, indexCurrentCapacity, allCapacity) {
 
     const allCapacitySaved = [...allCapacity]
 
-    allCapacitySaved.splice(indexCurrentCapacity,1)
+    allCapacitySaved.splice(indexCurrentCapacity, 1)
 
-    const otherCapacities = allCapacitySaved.reduce((acc,curr) => {
-        
+    const otherCapacities = allCapacitySaved.reduce((acc, curr) => {
+
         return acc + (curr.bus.capacity)
 
-    },0)
+    }, 0)
 
     return +totalRemaining - otherCapacities
 
@@ -405,38 +497,40 @@ exports.save = async function save({
             const seat_number = []
 
             if (remainingInformations.driving.length > 0) {
-                
-                let [sumCapacityNotAvailableBus,availableBus] = await getAvailableBus(remainingInformations.passengerNumberAlreadyGet,remainingInformations.driving)
+
+                let [sumCapacityNotAvailableBus, availableBus] = await getAvailableBus(remainingInformations.passengerNumberAlreadyGet, remainingInformations.driving)
 
                 let check = sumCapacityNotAvailableBus === 0 ? true : false
 
                 let drivingEntries = Object.entries(availableBus)
-                
+
                 for (let i = 1; i <= data.passenger_number; i++) {
-                    
+
                     let sum = sumCapacityNotAvailableBus
 
-                    let [indexDriving,dataGet] = drivingEntries.find(([index,value]) => {
-    
+                    let [indexDriving, dataGet] = drivingEntries.find(([index, value]) => {
+
                         sum += (+value.bus.capacity)
 
                         return sum >= (remainingInformations.passengerNumberAlreadyGet + i)
                     })
-    
-                    if(indexDriving > 0 ){
 
-                        let [[indexTemp,dataGetTemp]] = drivingEntries.splice(0 , 1)
+                    if (indexDriving > 0) {
+
+                        let [
+                            [indexTemp, dataGetTemp]
+                        ] = drivingEntries.splice(0, 1)
 
                         sumCapacityNotAvailableBus += dataGetTemp.bus.capacity
 
-                        availableBus.splice(0 , 1)
+                        availableBus.splice(0, 1)
 
                         remainingInformations.remainingPlace -= dataGetTemp.bus.capacity
                     }
 
                     seat_number.push({
-                        number : (dataGet.bus.capacity - await getRemainingPlaceByBus(remainingInformations.remainingPlace,indexDriving > 0 ? (indexDriving - 1) : indexDriving,availableBus)) + await getRightPassengerNumber( i ,sumCapacityNotAvailableBus,check) ,
-                        bus : dataGet.bus._id
+                        number: (dataGet.bus.capacity - await getRemainingPlaceByBus(remainingInformations.remainingPlace, indexDriving > 0 ? (indexDriving - 1) : indexDriving, availableBus)) + await getRightPassengerNumber(i, sumCapacityNotAvailableBus, check),
+                        bus: dataGet.bus._id
                     })
 
 
@@ -466,13 +560,13 @@ exports.save = async function save({
 
             const dataSaved = await new Booking(data).save()
 
-            if(data.user && guestKeys.length === 0){
+            if (data.user && guestKeys.length === 0) {
 
                 await User.findOneAndUpdate({
-                    _id : data.user
-                },{
-                    $push : {
-                        bookings : dataSaved._id
+                    _id: data.user
+                }, {
+                    $push: {
+                        bookings: dataSaved._id
                     }
                 })
 

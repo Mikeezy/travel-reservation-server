@@ -5,6 +5,7 @@ const townRouter = require('../../modules/countries/town_router')
 const busRouter = require('../../modules/bus/router')
 const travelRouter = require('../../modules/travels/router')
 const bookingRouter = require('../../modules/booking/router')
+const indexRouter = require('../../modules/index/router')
 
 const router = express.Router()
 
@@ -18,6 +19,7 @@ router.use((req,res,next) => {
 })
 
 
+router.use('/information',indexRouter)
 router.use('/travel',travelRouter)
 router.use('/booking',bookingRouter)
 router.use('/user',userRouter)
