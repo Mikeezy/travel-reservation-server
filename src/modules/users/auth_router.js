@@ -93,6 +93,7 @@ router.post('/signupAdminPartTwo/:token',
 
         next()
     }),
+    cacheMiddleware.customClear('/v1/user'),
     cacheMiddleware.clear,
     responseHandlerMiddleware
 )
@@ -114,6 +115,7 @@ router.get('/signupPartTwo/:token',
 
         next()
     }),
+    cacheMiddleware.customClear('/v1/user'),
     cacheMiddleware.clear,
     responseHandlerMiddleware
 )

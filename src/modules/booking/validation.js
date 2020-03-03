@@ -69,7 +69,6 @@ const referenceSchema = {
     reference: {
         in: 'params',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'La référence doit contenir au moins 10 caractères svp !',
             options: {

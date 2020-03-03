@@ -1,7 +1,7 @@
 {
 	"email": {
 		"EMAIL_FROM": "Quizoor@gmail.com",
-		"EMAIL_HEADER": "LABBAIK",
+		"EMAIL_HEADER": "LABBAIK TRANSPORT",
 		"EMAIL_USERNAME": "Quizoor@gmail.com",
 		"EMAIL_PASSWORD": "3333Quiz",
 		"EMAIL_CLIENT_ID": "658837219271-3t8q0lhtl85knbjjqf9cf2j5hj731gsq.apps.googleusercontent.com",
@@ -10,10 +10,10 @@
 		"EMAIL_ADMIN" : ["mikimus113@gmail.com"]
 	},
 
-	"DATABASE_URL": "mongodb://labbaik:labbaik_2020@ds135421.mlab.com:35421/labbaik",
+	"DATABASE_URL": "mongodb://localhost/labbaik",
 	
-	"HOSTNAME_BACKEND": "http://91.121.171.144:4152",
-	"HOSTNAME_FRONTEND": "http://91.121.171.144:4152",
+	"HOSTNAME_BACKEND": "https://api.labbaikvoyages.com",
+	"HOSTNAME_FRONTEND": "https://dashboard.labbaikvoyages.com",
 
 	"TOKEN_PRIVATE_KEY": "z9wsd72b-17a6-4K5e-8q784-7098deb98lcf",
 	"TOKEN_EXPIRE_USER": "24h",

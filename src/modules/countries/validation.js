@@ -43,7 +43,6 @@ const saveCountrySchema = {
     name: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {
@@ -67,7 +66,6 @@ const saveTownSchema = {
     name: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {

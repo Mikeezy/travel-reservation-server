@@ -43,7 +43,6 @@ const saveSchema = {
     name: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {
@@ -54,7 +53,6 @@ const saveSchema = {
     immatriculation_number : {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: `Le numéro d'immatriculation doit contenir au moins 4 caractères svp !`,
             options: {
