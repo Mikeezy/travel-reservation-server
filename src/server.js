@@ -22,7 +22,7 @@ app.use(cors())
 if (process.env.NODE_ENV === "production") {
 
     app.use(helmet())
-    //app.set('trust proxy',1)
+    app.set('trust proxy', 1)
 
 }
 
@@ -57,15 +57,23 @@ app.use(errorHandlerMiddleware)
 // Handler
 
 process.on('unhandledRejection', (reason, p) => {
-    
+
     throw reason
 
 })
 
 process.on('uncaughtException', async (error) => {
 
-    const isOperationalError = await handleError(error)
-    if (!isOperationalError) process.exit(1)
+    try {
+
+        const isOperationalError = await handleError(error)
+        if (!isOperationalError) process.exit(1)
+
+    } catch (e) {
+
+        process.exit(1)
+        
+    }
 
 })
 
