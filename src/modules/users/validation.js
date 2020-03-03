@@ -5,7 +5,6 @@ const authSchema = {
     email: {
         in: 'body',
         isEmail: true,
-        normalizeEmail: true,
         errorMessage: 'Email invalide'
     },
     password: {
@@ -56,7 +55,6 @@ const signupAdminPartOneSchema = {
     email: {
         in: 'body',
         isEmail: true,
-        normalizeEmail: true,
         errorMessage: 'Email invalide',
         bail: true,
         custom: {
@@ -100,7 +98,6 @@ const signupAdminPartTwoSchema = {
     firstname: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le prénom doit contenir au moins 2 caractères svp !',
             options: {
@@ -111,7 +108,6 @@ const signupAdminPartTwoSchema = {
     lastname: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {
@@ -176,7 +172,6 @@ const signup = {
     firstname: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le prénom doit contenir au moins 2 caractères svp !',
             options: {
@@ -187,7 +182,6 @@ const signup = {
     lastname: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {
@@ -198,7 +192,6 @@ const signup = {
     email: {
         in: 'body',
         isEmail: true,
-        normalizeEmail: true,
         errorMessage: 'Email invalide',
         bail: true,
         custom: {
@@ -266,7 +259,6 @@ const resetPasswordPartOneSchema = {
     email: {
         in: 'body',
         isEmail: true,
-        normalizeEmail: true,
         errorMessage: 'Email invalide',
         bail: true,
         custom: {
@@ -373,7 +365,6 @@ const updateProfileSchema = {
     firstname: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le prénom doit contenir au moins 2 caractères svp !',
             options: {
@@ -384,7 +375,6 @@ const updateProfileSchema = {
     lastname: {
         in: 'body',
         trim: true,
-        escape: true,
         isLength: {
             errorMessage: 'Le nom doit contenir au moins 2 caractères svp !',
             options: {

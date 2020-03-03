@@ -96,6 +96,7 @@ router.post('/save',
 
         next()
     }),
+    cacheMiddleware.customClear('/v1/town'),
     cacheMiddleware.clear,
     responseHandlerMiddleware
 )
