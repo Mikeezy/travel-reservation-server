@@ -1,25 +1,21 @@
 {
-  "name": "labbaik_backend",
+  "name": "travel_reservation_server",
   "version": "1.0.0",
-  "description": "Plateforme labbaik backend",
+  "description": "Travel reservation server",
   "main": "./src/server.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "start": "NODE_ENV=production pm2 start ./src/server.js -i 3 --name labbaik_backend",
-    "dev": "NODE_ENV=development nodemon ./src/server.js",
-    "test": "jest",
-    "seed:dev": "NODE_ENV=development mocha",
-    "seed:prod": "NODE_ENV=production mocha"
+    "start": "NODE_ENV=production node ./src/server.js",
+    "dev": "NODE_ENV=development nodemon ./src/server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@bitbucket.org/masskoder/labbaik-backend.git"
+    "url": "git+ssh://git@github.com:Mikeezy/travel-reservation-server.git"
   },
   "author": "NABE Bammoy Minkitam",
   "license": "MIT",
-  "homepage": "https://bitbucket.org/masskoder/labbaik-backend#readme",
   "dependencies": {
     "async": "^3.1.1",
     "bcryptjs": "^2.4.3",

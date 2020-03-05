@@ -261,7 +261,7 @@ exports.getAllForFrontendDashboard = async function getAllForFrontendDashboard()
                         $gte: moment().startOf('day').toDate(),
                         $lte: moment().endOf('day').toDate()
                     },
-                    status : true
+                    status: true
                 }
             },
             {
@@ -281,7 +281,7 @@ exports.getAllForFrontendDashboard = async function getAllForFrontendDashboard()
                         $gte: moment().startOf('week').toDate(),
                         $lte: moment().endOf('week').toDate()
                     },
-                    status : true
+                    status: true
                 }
             },
             {
@@ -301,7 +301,7 @@ exports.getAllForFrontendDashboard = async function getAllForFrontendDashboard()
                         $gte: moment().startOf('month').toDate(),
                         $lte: moment().endOf('month').toDate()
                     },
-                    status : true
+                    status: true
                 }
             },
             {
@@ -321,7 +321,7 @@ exports.getAllForFrontendDashboard = async function getAllForFrontendDashboard()
                         $gte: moment().startOf('month').toDate(),
                         $lte: moment().endOf('month').toDate()
                     },
-                    status : true
+                    status: true
                 }
             },
             {

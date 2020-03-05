@@ -1,25 +1,25 @@
 {
 	"email": {
-		"EMAIL_FROM": "Quizoor@gmail.com",
-		"EMAIL_HEADER": "LABBAIK TRANSPORT",
-		"EMAIL_USERNAME": "Quizoor@gmail.com",
-		"EMAIL_PASSWORD": "3333Quiz",
-		"EMAIL_CLIENT_ID": "658837219271-3t8q0lhtl85knbjjqf9cf2j5hj731gsq.apps.googleusercontent.com",
-		"EMAIL_CLIENT_SECRET": "wIjwoztJOUNGoohWaTF_PMA5",
-		"EMAIL_REFRESH_TOKEN": "1/wdgFI9votWWLKhW12z69toSJRlKQ7GtkYC-nbTOhI3A",
-		"EMAIL_ADMIN" : ["mikimus113@gmail.com"]
+		"EMAIL_FROM": "",
+		"EMAIL_HEADER": "",
+		"EMAIL_USERNAME": "",
+		"EMAIL_PASSWORD": "",
+		"EMAIL_CLIENT_ID": "",
+		"EMAIL_CLIENT_SECRET": "",
+		"EMAIL_REFRESH_TOKEN": "",
+		"EMAIL_ADMIN" : [""]
 	},
 
-	"DATABASE_URL": "mongodb://localhost/labbaik",
+	"DATABASE_URL": "mongodb://localhost/XXXXXX",
 	
-	"HOSTNAME_BACKEND": "http://localhost:4152",
-	"HOSTNAME_FRONTEND": "http://localhost:3000",
+	"HOSTNAME_BACKEND": "",
+	"HOSTNAME_FRONTEND": "",
 
-	"TOKEN_PRIVATE_KEY": "z9wsd72b-17a6-4K5e-8q784-7098deb98lcf",
-	"TOKEN_EXPIRE_USER": "24h",
-	"TOKEN_EXPIRE_IN_SHORT": "1h",
+	"TOKEN_PRIVATE_KEY": "",
+	"TOKEN_EXPIRE_USER": "",
+	"TOKEN_EXPIRE_IN_SHORT": "",
 
-	"LINK_CONFIRMATION_FRONTEND": "/auth/confirmation",
-	"LINK_CONFIRMATION_FRONTEND_ADMIN": "/auth/confirmation_",
-	"LINK_RESET_PASSWORD_FRONTEND": "/auth/resetPassword"
+	"LINK_CONFIRMATION_FRONTEND": "",
+	"LINK_CONFIRMATION_FRONTEND_ADMIN": "",
+	"LINK_RESET_PASSWORD_FRONTEND": ""
 }

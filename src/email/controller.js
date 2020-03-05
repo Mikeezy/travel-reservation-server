@@ -56,7 +56,7 @@ const sendConfirmationMail = async (data) => {
     const mailOptions = {
         from: sender,
         to: data.to,
-        subject: 'Veuillez confirmer votre adresse mail',
+        subject: 'Please confirm your email address !',
         html: page
     }
 
@@ -80,7 +80,7 @@ const sendAfterRegisterMail = async (data) => {
     const mailOptions = {
         from: sender,
         to: data.to,
-        subject: 'Compte crée avec succès !',
+        subject: 'Account created successfully !',
         html: page
     }
 
@@ -104,7 +104,7 @@ const sendResetPasswordMail = async (data) => {
     const mailOptions = {
         from: sender,
         to: data.to,
-        subject: 'Demande de réinitialisation de mot de passe',
+        subject: 'Reset password request',
         html: page
     }
 

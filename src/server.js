@@ -79,5 +79,5 @@ process.on('uncaughtException', async (error) => {
 
 // Lauch
 app.listen(port);
-console.log('LABBAIK SERVER API on port: ' + port);
+console.log(' SERVER API on port: ' + port);
 console.log("NODE_ENV : ", process.env.NODE_ENV);

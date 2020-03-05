@@ -152,13 +152,13 @@ exports.auth = async function auth({
 
         } else {
 
-            throw new customError('Email ou mot de passe incorrect, veuillez réessayer svp !', 'AUTHENTICATION_ERROR')
+            throw new customError('Email or password incorrect, please retry !', 'AUTHENTICATION_ERROR')
 
         }
 
     } else {
 
-        throw new customError('Email ou mot de passe incorrect, veuillez réessayer svp !', 'AUTHENTICATION_ERROR')
+        throw new customError('Email or password incorrect, please retry !', 'AUTHENTICATION_ERROR')
 
     }
 
@@ -288,11 +288,11 @@ exports.checkToken = async function checkToken({
 
         if (error.name === 'TokenExpiredError') {
 
-            throw new customError('La validité du token a expiré, veuillez recommencer le processus svp !', 'TOKEN_EXPIRED')
+            throw new customError('Token expired, please restart the process !', 'TOKEN_EXPIRED')
 
         } else if (error.name === 'JsonWebTokenError') {
 
-            throw new customError('Le token est invalide, veuillez réessayer svp !', 'TOKEN_INVALID')
+            throw new customError('Token invalid, please retry !', 'TOKEN_INVALID')
 
         } else {
 

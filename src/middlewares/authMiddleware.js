@@ -10,7 +10,7 @@ module.exports = function (req, res, next) {
 
     if (!token) {
 
-        let error = new customError(`Token non fourni, veuillez vous authentifier svp !`,'TOKEN_NOT_PROVIDED')
+        let error = new customError(`Token not provide, please authenticate yourself !`,'TOKEN_NOT_PROVIDED')
         next(error)
 
     } else {
@@ -23,12 +23,12 @@ module.exports = function (req, res, next) {
 
                 if (error.name === 'TokenExpiredError') {
 
-                    let error = new customError('Token expiré, veuillez réessayer ou veuillez vous authentifier svp !','TOKEN_EXPIRED')
+                    let error = new customError('Token expired, please retry or authenticate yourself !','TOKEN_EXPIRED')
                     next(error)
 
                 } else if (error.name === 'JsonWebTokenError') {
 
-                    let error = new customError('Token invalide, veuillez réessayer ou veuillez vous authentifier svp !','TOKEN_INVALID')
+                    let error = new customError('Invalid Token, please retry or authenticate yourself !','TOKEN_INVALID')
                     next(error)
 
                 } else {
