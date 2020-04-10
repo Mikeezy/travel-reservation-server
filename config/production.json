@@ -10,7 +10,7 @@
 		"EMAIL_ADMIN" : [""]
 	},
 
-	"DATABASE_URL": "mongodb://localhost/XXXXXX",
+	"DATABASE_URL": "",
 	
 	"HOSTNAME_BACKEND": "",
 	"HOSTNAME_FRONTEND": "",
