@@ -52,7 +52,7 @@
     "canvas": "^2.6.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "mocha": "^7.0.1",
+    "mocha": "^10.2.0",
     "utf-8-validate": "^5.0.2"
   }
 }
